@@ -1,0 +1,16 @@
+.git
+.gitignore
+data/
+Makefile
+README.md
+docker-compose.yml
+*.md
+docs/
+LICENSE
+.github/
+Dockerfile
+.dockerignore
+web/dist/
+web/ui/node_modules/
+web/ui/.angular/
+*.tar.gz

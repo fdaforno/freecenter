@@ -1,0 +1,19 @@
+# Build and run FreeCenter:
+#   FREECENTER_ADMIN_PASSWORD='choose-a-password' docker compose up -d --build
+services:
+  freecenter:
+    build: .
+    image: freecenter:latest
+    container_name: freecenter
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      FREECENTER_ADMIN_USER: admin
+      # Password of the administrator created on first start.
+      FREECENTER_ADMIN_PASSWORD: ${FREECENTER_ADMIN_PASSWORD:?set FREECENTER_ADMIN_PASSWORD}
+    volumes:
+      - freecenter-data:/data
+
+volumes:
+  freecenter-data:
