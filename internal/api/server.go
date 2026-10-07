@@ -73,6 +73,7 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/guest-os", s.auth(s.handleListGuestOS))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/datastores/{ds}/files", s.auth(s.handleDatastoreFiles))
 	mux.HandleFunc("POST /api/v1/hosts/{hid}/datastores/{ds}/files/upload", s.auth(s.handleUploadFile))
+	mux.HandleFunc("GET /api/v1/hosts/{hid}/datastores/{ds}/files/download", s.auth(s.admin(s.handleDownloadFile)))
 	mux.HandleFunc("POST /api/v1/hosts/{hid}/datastores/{ds}/iso/download", s.auth(s.handleDownloadISO))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/datastores/{ds}/iso/download/status", s.auth(s.handleDownloadISOStatus))
 	mux.HandleFunc("POST /api/v1/hosts/{hid}/datastores/{ds}/cloud-image/download", s.auth(s.handleDownloadCloudImage))
@@ -84,6 +85,7 @@ func (s *Server) Routes() http.Handler {
 	// vms
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/vms", s.auth(s.handleListVMs))
 	mux.HandleFunc("POST /api/v1/hosts/{hid}/vms", s.auth(s.handleCreateVM))
+	mux.HandleFunc("POST /api/v1/hosts/{hid}/vms/register", s.auth(s.handleRegisterVM))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/vms/{vmid}", s.auth(s.handleGetVM))
 	mux.HandleFunc("PUT /api/v1/hosts/{hid}/vms/{vmid}", s.auth(s.handleUpdateVM))
 	mux.HandleFunc("DELETE /api/v1/hosts/{hid}/vms/{vmid}", s.auth(s.handleDeleteVM))

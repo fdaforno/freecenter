@@ -61,6 +61,7 @@ Every modifying request is recorded in Recent Tasks. A client can label its requ
 |---|---|---|
 | GET | `/hosts/{hid}/datastores/{ds}/files?path=/` | list a folder |
 | POST | `/hosts/{hid}/datastores/{ds}/files/upload?path=/dir/file.iso` | upload (raw body) |
+| GET | `/hosts/{hid}/datastores/{ds}/files/download?path=/dir/file` | download a file (administrators only) |
 | DELETE | `/hosts/{hid}/datastores/{ds}/files?path=/dir/file` | delete a file or an empty folder |
 | POST | `/hosts/{hid}/datastores/{ds}/iso/download` | download an ISO from a URL to the datastore |
 | GET | `/cloud-images` | catalog of downloadable cloud images |
@@ -71,6 +72,7 @@ Every modifying request is recorded in Recent Tasks. A client can label its requ
 | Method | Path | Description |
 |---|---|---|
 | GET, POST | `/hosts/{hid}/vms` | list / create |
+| POST | `/hosts/{hid}/vms/register` | `{datastore,path}`: add to the inventory a machine that already exists on a datastore, from its `.vmx` file |
 | GET, PUT, DELETE | `/hosts/{hid}/vms/{vmid}` | details / change settings / delete (`?delete_files=false` to only unregister) |
 | POST | `/hosts/{hid}/vms/{vmid}/power` | `{action:"on"\|"off"\|"reset"\|"suspend"\|"shutdown_guest"\|"reboot_guest"}` |
 | GET (WebSocket) | `/hosts/{hid}/vms/{vmid}/console?token=<token>` | console of a running machine (RFB, subprotocol `binary`) |

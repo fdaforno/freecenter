@@ -73,7 +73,7 @@ The data travels directly between the two hosts, over a dedicated and restricted
 - **Services**: start, stop and restart host services and choose which start with the host.
 - **Time**: host clock and NTP servers.
 - **Maintenance mode**, reboot and shutdown.
-- **Datastore browser**: browse, upload and delete files, download ISO images straight to a datastore from a URL.
+- **Datastore browser**: browse, upload and delete files, download ISO images straight to a datastore from a URL, and register a virtual machine that already exists on a datastore.
 - A read-only `esxcli` console for quick diagnostics.
 
 ![Virtual switches and port groups](docs/media/host-networks.png)

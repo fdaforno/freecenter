@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { ClarityModule } from '@clr/angular';
 
-import { ActionsService, ApiService, BytesPipe, DialogService, FileInfo, errorMessage } from '../../core';
+import { ActionsService, ApiService, BytesPipe, DialogService, FileInfo, InventoryService, errorMessage } from '../../core';
 
 /** Datastore file browser (the Files tab). */
 @Component({
@@ -13,6 +13,15 @@ import { ActionsService, ApiService, BytesPipe, DialogService, FileInfo, errorMe
       <button class="btn btn-sm btn-outline" (click)="picker.click()">Upload Files</button>
       <input #picker type="file" hidden (change)="upload(picker)" />
       <button class="btn btn-sm btn-outline" (click)="dialogs.isoDownload.set({ hostId: hostId(), datastore: datastore() })">Download ISO...</button>
+      <button
+        class="btn btn-sm btn-outline"
+        [disabled]="!isVmx(selected())"
+        title="Add the virtual machine of the selected .vmx file to the inventory"
+        (click)="registerVm()"
+      >
+        Register VM
+      </button>
+      <button class="btn btn-sm btn-outline" [disabled]="!selected() || selected()?.is_dir" (click)="download()">Download</button>
       <button class="btn btn-sm btn-outline" [disabled]="!selected()" (click)="remove()">Delete</button>
       <button class="btn btn-sm btn-link" title="Refresh" (click)="load()"><cds-icon shape="refresh"></cds-icon></button>
     </div>
@@ -95,6 +104,7 @@ import { ActionsService, ApiService, BytesPipe, DialogService, FileInfo, errorMe
 })
 export class DatastoreFilesComponent {
   private readonly api = inject(ApiService);
+  private readonly inventory = inject(InventoryService);
   private readonly actions = inject(ActionsService);
   protected readonly dialogs = inject(DialogService);
 
@@ -160,6 +170,35 @@ export class DatastoreFilesComponent {
     const target = `${this.path() === '/' ? '' : this.path()}/${file.name}`;
     await this.actions.track('Upload file to datastore', file.name, () => this.api.uploadFile(this.hostId(), this.datastore(), target, file));
     await this.load();
+  }
+
+  protected isVmx(f: FileInfo | null): boolean {
+    return !!f && !f.is_dir && f.name.toLowerCase().endsWith('.vmx');
+  }
+
+  protected async registerVm(): Promise<void> {
+    const f = this.selected();
+    if (!f || !this.isVmx(f)) return;
+    const target = this.fullPath(f).replace(/^\/+/, '');
+    await this.actions.track('Register virtual machine', f.name, () => this.api.registerVm(this.hostId(), this.datastore(), target));
+    void this.inventory.refresh();
+  }
+
+  /** Saves the selected file through the browser. Meant for logs and configuration files: the content is held in memory. */
+  protected async download(): Promise<void> {
+    const f = this.selected();
+    if (!f || f.is_dir) return;
+    try {
+      const blob = await this.api.downloadFile(this.hostId(), this.datastore(), this.fullPath(f));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = f.name;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      this.error.set(errorMessage(e));
+    }
   }
 
   protected async remove(): Promise<void> {

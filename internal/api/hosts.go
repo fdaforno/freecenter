@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"os"
+	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -485,6 +488,33 @@ func (s *Server) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 201, map[string]any{"path": p, "size": size})
+}
+
+// handleDownloadFile streams a file of a datastore to the client.
+// Administrators only: disks and configuration files hold the guests' data.
+func (s *Server) handleDownloadFile(w http.ResponseWriter, r *http.Request) {
+	c, err := s.client(r)
+	if err != nil {
+		apiError(w, err)
+		return
+	}
+	p := r.URL.Query().Get("path")
+	if p == "" || p == "/" || strings.Contains(p, "..") {
+		errJSON(w, http.StatusBadRequest, "path query parameter required")
+		return
+	}
+	body, size, err := c.DownloadDatastoreFile(r.Context(), r.PathValue("ds"), p)
+	if err != nil {
+		apiError(w, err)
+		return
+	}
+	defer body.Close()
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": path.Base(p)}))
+	if size >= 0 {
+		w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
+	}
+	_, _ = io.Copy(w, body)
 }
 
 func (s *Server) handleDeleteFile(w http.ResponseWriter, r *http.Request) {

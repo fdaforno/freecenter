@@ -23,6 +23,19 @@ func (c *Client) UploadDatastoreFile(ctx context.Context, datastore, remotePath,
 	return ds.UploadFile(ctx, localFile, ds.Path(remotePath), nil)
 }
 
+// DownloadDatastoreFile opens a file of a datastore for reading and returns
+// its content and size. The caller closes the reader.
+func (c *Client) DownloadDatastoreFile(ctx context.Context, datastore, remotePath string) (io.ReadCloser, int64, error) {
+	if err := c.Ensure(ctx); err != nil {
+		return nil, 0, err
+	}
+	ds, err := c.finder.Datastore(ctx, datastore)
+	if err != nil {
+		return nil, 0, err
+	}
+	return ds.Download(ctx, strings.TrimPrefix(remotePath, "/"), nil)
+}
+
 // DeleteDatastoreFile deletes a file or an empty directory on a datastore.
 // Directories are never removed recursively: a folder with content is refused.
 // Uses SSH (rm/rmdir) because the FileManager API task is license-gated.

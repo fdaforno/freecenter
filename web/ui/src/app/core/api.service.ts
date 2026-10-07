@@ -135,6 +135,14 @@ export class ApiService {
       (r) => r ?? [],
     );
   }
+  /** Adds an existing VM to the inventory from its .vmx file on a datastore. */
+  registerVm(hid: string, datastore: string, path: string): Promise<Vm> {
+    return this.send(this.http.post<Vm>(`${this.host(hid)}/vms/register`, { datastore, path }));
+  }
+  /** Content of a datastore file (administrators only). */
+  downloadFile(hid: string, ds: string, path: string): Promise<Blob> {
+    return this.send(this.http.get(`${this.ds(hid, ds)}/files/download`, { params: { path }, responseType: 'blob' }));
+  }
   deleteFile(hid: string, ds: string, path: string): Promise<unknown> {
     return this.send(this.http.delete(`${this.ds(hid, ds)}/files`, { params: { path } }));
   }

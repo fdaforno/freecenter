@@ -88,6 +88,36 @@ func (s *Server) handleCreateVM(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 201, vm)
 }
 
+// handleRegisterVM adds to the inventory a virtual machine that already exists
+// on a datastore, from its .vmx file.
+func (s *Server) handleRegisterVM(w http.ResponseWriter, r *http.Request) {
+	c, err := s.client(r)
+	if err != nil {
+		apiError(w, err)
+		return
+	}
+	var req struct {
+		Datastore string `json:"datastore"`
+		Path      string `json:"path"`
+	}
+	if !decodeBody(w, r, &req) {
+		return
+	}
+	if req.Datastore == "" || !strings.HasSuffix(req.Path, ".vmx") || strings.Contains(req.Path, "..") {
+		errJSON(w, http.StatusBadRequest, "datastore and the path of a .vmx file are required")
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Minute)
+	defer cancel()
+	vm, err := c.RegisterVM(ctx, req.Datastore, req.Path)
+	if err != nil {
+		apiError(w, err)
+		return
+	}
+	vm.HostID = r.PathValue("hid")
+	writeJSON(w, 201, vm)
+}
+
 var isoPathRE = regexp.MustCompile(`^\[[^\]]+\] .+\.(iso|ISO)$`)
 
 func (s *Server) handleGetVM(w http.ResponseWriter, r *http.Request) {

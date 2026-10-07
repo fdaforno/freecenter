@@ -72,6 +72,7 @@ var routeTaskNames = []struct{ method, suffix, name string }{
 	{"POST", "/power", "Change power state"},
 	{"POST", "/migrate", "Migrate virtual machine"},
 	{"POST", "/clone", "Clone virtual machine"},
+	{"POST", "/vms/register", "Register virtual machine"},
 	{"POST", "/vms", "Create virtual machine"},
 	{"POST", "/files/upload", "Upload file to datastore"},
 	{"POST", "/iso/download", "Download ISO to datastore"},
