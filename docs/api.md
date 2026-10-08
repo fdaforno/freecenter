@@ -37,6 +37,7 @@ Every modifying request is recorded in Recent Tasks. A client can label its requ
 | POST | `/hosts/{hid}/power` | `{action:"reboot"\|"shutdown", reason}` |
 | POST | `/hosts/{hid}/maintenance` | `{enabled}` |
 | GET | `/hosts/{hid}/datastores` | datastores with capacity and free space |
+| GET | `/hosts/{hid}/datastores/{ds}/health` | SMART/NVMe health of the devices backing a datastore (SSH-only, best effort) |
 | GET | `/hosts/{hid}/networks` | networks available to virtual machines |
 | GET | `/hosts/{hid}/guest-os` | supported guest operating systems |
 | POST | `/hosts/{hid}/esxcli` | `{command:"esxcli ..."}`: read-only commands from an allow list (a query: allowed to read-only users) |
@@ -134,3 +135,4 @@ Fields of `PUT /hosts/{hid}/vms/{vmid}`. All are optional and only what is prese
 | GET, POST | `/schedules` | list / create a scheduled snapshot or backup |
 | PUT, DELETE | `/schedules/{id}` | replace / delete |
 | POST | `/schedules/{id}/run` | run now |
+| GET | `/alarms` | active conditions across all connected hosts (disk health so far), cached server-side and refreshed every ~60 s |

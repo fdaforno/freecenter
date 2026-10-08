@@ -4,6 +4,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 
 import { AuthService, Role } from './auth.service';
 import {
+  Alarm,
   Backup,
   BackupRequest,
   CloneRequest,
@@ -11,6 +12,7 @@ import {
   CreateSnapshotRequest,
   CreateVmRequest,
   Datastore,
+  DatastoreHealth,
   DownloadStatus,
   FileInfo,
   GuestOs,
@@ -121,6 +123,10 @@ export class ApiService {
   }
   datastores(hid: string): Promise<Datastore[]> {
     return this.send(this.http.get<Datastore[] | null>(`${this.host(hid)}/datastores`)).then((r) => r ?? []);
+  }
+  /** Health (SMART/NVMe) of the devices backing one datastore. */
+  datastoreHealth(hid: string, ds: string): Promise<DatastoreHealth> {
+    return this.send(this.http.get<DatastoreHealth>(`${this.ds(hid, ds)}/health`));
   }
   networks(hid: string): Promise<Network[]> {
     return this.send(this.http.get<Network[] | null>(`${this.host(hid)}/networks`)).then((r) => r ?? []);
@@ -274,6 +280,15 @@ export class ApiService {
   // ---- recent tasks ----
   tasks(): Promise<ServerTask[]> {
     return this.send(this.http.get<ServerTask[] | null>(`${BASE}/tasks`)).then((r) => r ?? []);
+  }
+
+  // ---- alarms (active disk-health conditions, aggregated server-side) ----
+  alarms(): Promise<Alarm[]> {
+    return this.send(this.http.get<Alarm[] | null>(`${BASE}/alarms`)).then((r) => r ?? []);
+  }
+  /** Trigger an immediate disk-health probe and return the fresh alarms. */
+  refreshAlarms(): Promise<Alarm[]> {
+    return this.send(this.http.post<Alarm[] | null>(`${BASE}/alarms/refresh`, null)).then((r) => r ?? []);
   }
 
   // ---- snapshots ----

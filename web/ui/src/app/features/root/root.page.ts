@@ -8,6 +8,7 @@ import { NetworkGridComponent } from '../../shared/network-grid.component';
 import { ObjectHeaderComponent, ObjectTab } from '../../shared/object-header.component';
 import { UsageMeterComponent } from '../../shared/usage-meter.component';
 import { VmGridComponent } from '../../shared/vm-grid.component';
+import { AlarmsComponent } from '../../shared/alarms.component';
 import { ProtectionComponent } from './protection.component';
 
 const TABS: ObjectTab[] = [
@@ -23,7 +24,7 @@ const TABS: ObjectTab[] = [
 /** The inventory root: what a vCenter Server object shows in the vSphere Client. */
 @Component({
   selector: 'app-root-page',
-  imports: [ClarityModule, ObjectHeaderComponent, UsageMeterComponent, HostGridComponent, VmGridComponent, DatastoreGridComponent, NetworkGridComponent, ProtectionComponent],
+  imports: [ClarityModule, ObjectHeaderComponent, UsageMeterComponent, HostGridComponent, VmGridComponent, DatastoreGridComponent, NetworkGridComponent, ProtectionComponent, AlarmsComponent],
   template: `
     <div class="fc-page">
       <app-object-header icon="building" title="FreeCenter" [base]="['/root']" [tabs]="tabs">
@@ -74,6 +75,12 @@ const TABS: ObjectTab[] = [
               </clr-alert>
             }
             <div class="fc-cards">
+              <div class="card">
+                <div class="card-header">Alarms</div>
+                <div class="card-block">
+                  <app-alarms />
+                </div>
+              </div>
               <div class="card">
                 <div class="card-header">Inventory</div>
                 <div class="card-block">

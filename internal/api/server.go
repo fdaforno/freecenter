@@ -34,11 +34,22 @@ type Server struct {
 	cache         *inventoryCache
 	tasks         *taskLog
 	running       sync.Map // schedule id -> struct{}: schedules being executed right now
+
+	// Aggregated alarms (disk health so far), cached server-side so the
+	// root summary can poll without opening an SSH session per host.
+	alarmMu  sync.Mutex
+	alarmVal []model.Alarm
+	alarmAt  time.Time
+
+	// Per-datastore disk health, populated by healthRefreshLoop every
+	// 10 minutes (never on UI request).
+	health *healthCache
 }
 
 func NewServer(st *store.Store, mgr *esxi.Manager, logger *slog.Logger, sshKnownHosts string) *Server {
-	s := &Server{store: st, mgr: mgr, logger: logger, sshKnownHosts: sshKnownHosts, cache: newInventoryCache(), tasks: &taskLog{}}
+	s := &Server{store: st, mgr: mgr, logger: logger, sshKnownHosts: sshKnownHosts, cache: newInventoryCache(), tasks: &taskLog{}, health: newHealthCache()}
 	go s.schedulerLoop()
+	go s.healthRefreshLoop()
 	return s
 }
 
@@ -69,6 +80,7 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("DELETE /api/v1/hosts/{hid}", s.auth(s.handleDeleteHost))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/test", s.auth(s.handleTestHost))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/datastores", s.auth(s.handleListDatastores))
+	mux.HandleFunc("GET /api/v1/hosts/{hid}/datastores/{ds}/health", s.auth(s.handleDatastoreHealth))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/networks", s.auth(s.handleListNetworks))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/guest-os", s.auth(s.handleListGuestOS))
 	mux.HandleFunc("GET /api/v1/hosts/{hid}/datastores/{ds}/files", s.auth(s.handleDatastoreFiles))
@@ -96,6 +108,8 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("POST /api/v1/hosts/{hid}/vms/{vmid}/clone", s.auth(s.handleCloneVM))
 	mux.HandleFunc("GET /api/v1/jobs/{id}", s.auth(s.handleJobStatus))
 	mux.HandleFunc("GET /api/v1/tasks", s.auth(s.handleListTasks))
+	mux.HandleFunc("GET /api/v1/alarms", s.auth(s.handleListAlarms))
+	mux.HandleFunc("POST /api/v1/alarms/refresh", s.auth(s.handleRefreshAlarms))
 
 	// backups and schedules
 	mux.HandleFunc("POST /api/v1/hosts/{hid}/vms/{vmid}/backup", s.auth(s.handleBackupVM))

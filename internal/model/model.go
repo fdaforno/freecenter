@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"strings"
+	"time"
+)
 
 // HostRecord is a registered ESXi host (persisted).
 type HostRecord struct {
@@ -128,6 +132,156 @@ type Datastore struct {
 	FreeB      int64  `json:"free_bytes"`
 	URL        string `json:"url,omitempty"`
 	Accessible bool   `json:"accessible"`
+}
+
+// ---- disk health (SMART / NVMe), read over SSH ----
+
+// DiskHealth is the health of a single backing device of a datastore.
+//
+// On ESXi free, SMART/NVMe health is only reachable over SSH
+// (esxcli storage core device smart / esxcli storage core device list).
+// Not every controller exposes every field: missing values stay zero
+// and the corresponding *Ok flag is false.
+type DiskHealth struct {
+	// Device ID (naa.xxx, eui.xxx or t10.xxx) and display name.
+	DeviceID   string `json:"device_id"`
+	DisplayName string `json:"display_name,omitempty"`
+	// SAS/SATA: "HDD", "SSD"; NVMe: "NVMe". Empty when unknown.
+	FormFactor string `json:"form_factor,omitempty"`
+
+	// SMART overall assessment as reported by the controller
+	// ("OK", "FAIL", "Suspected", "Warning", "Critical", ...). Empty when
+	// the controller exposes no overall status.
+	SMARTStatus string `json:"smart_status,omitempty"`
+
+	// Counters that, when non-zero, indicate a degraded drive.
+	// Always present in JSON (0 when not applicable) so the UI can
+	// distinguish "0" from "not reported".
+	ReallocatedSectors int `json:"reallocated_sectors"`
+	PendingSectors     int `json:"pending_sectors"`
+	Uncorrectable      int `json:"uncorrectable"`
+
+	// NVMe-specific fields (populated when the device is NVMe and the
+	// controller exposes health via esxcli). Always present in JSON
+	// (0 for SATA/SAS) so the UI can distinguish "0" from "not reported".
+	MediaErrors    int `json:"media_errors"`
+	PercentageUsed int `json:"percentage_used"`
+
+	// Temperature in degrees Celsius, when reported.
+	Temperature int `json:"temperature,omitempty"`
+	TempOk      bool `json:"temp_ok,omitempty"`
+
+	// True when the device refused SMART / health (typical of some NVMe
+	// controllers under ESXi): the UI shows what is available, never errors.
+	Unsupported bool `json:"unsupported,omitempty"`
+
+	// Last error from SSH, when the whole probe failed.
+	Error string `json:"error,omitempty"`
+}
+
+// DatastoreHealth is the aggregate health of every device backing a datastore.
+type DatastoreHealth struct {
+	Datastore string       `json:"datastore"`
+	HostID    string       `json:"host_id"`
+	Devices   []DiskHealth `json:"devices"`
+}
+
+// Alarm is a single active condition worth surfacing at the root summary.
+//
+// Right now alarms come from disk health (reallocated sectors, SMART not OK,
+// over-temperature); the structure is generic so other sources can be added
+// later without changing the UI.
+type Alarm struct {
+	// Kind identifies the source: "disk" so far.
+	Kind string `json:"kind"`
+	// "danger" (red, compromising) or "warning".
+	Severity string `json:"severity"`
+	HostID   string `json:"host_id"`
+	HostName string `json:"host_name"`
+	// Object the alarm is about: a datastore for "disk" alarms.
+	Target string `json:"target"`
+	// Short, human-readable reason, e.g. "2 reallocated sectors on naa.5000..."
+	Message string `json:"message"`
+}
+
+// DiskHealth thresholds, in degrees Celsius. A temperature at or above
+// tempDanger is shown in red (alongside reallocated sectors and a
+// non-OK SMART status); between tempWarn and tempDanger it is yellow.
+const (
+	DiskTempWarn   = 50
+	DiskTempDanger = 65
+)
+
+// IsCompromising reports whether the disk health indicates a drive that
+// may already be losing data: reallocated/pending/uncorrectable sectors,
+// media errors (NVMe), or an explicit non-OK SMART status.
+func (h DiskHealth) IsCompromising() bool {
+	if h.SMARTStatus != "" && !strings.EqualFold(h.SMARTStatus, "OK") {
+		return true
+	}
+	return h.ReallocatedSectors > 0 || h.PendingSectors > 0 || h.Uncorrectable > 0 || h.MediaErrors > 0
+}
+
+// IsOverTemperature reports a temperature at or above the danger threshold.
+func (h DiskHealth) IsOverTemperature() bool {
+	return h.Temperature > 0 && h.Temperature >= DiskTempDanger
+}
+
+// IsWarning reports a non-critical but notable condition (e.g. a high
+// temperature below the danger threshold).
+func (h DiskHealth) IsWarning() bool {
+	if h.IsCompromising() {
+		return false
+	}
+	return h.Temperature > 0 && h.Temperature >= DiskTempWarn && h.Temperature < DiskTempDanger
+}
+
+// Severity returns "danger" for compromising/over-temperature conditions,
+// "warning" for the warning band, "" otherwise.
+func (h DiskHealth) Severity() string {
+	if h.IsCompromising() || h.IsOverTemperature() {
+		return "danger"
+	}
+	if h.IsWarning() {
+		return "warning"
+	}
+	return ""
+}
+
+// ShortDescription is a one-line, human-readable summary used in alarms.
+func (h DiskHealth) ShortDescription() string {
+	name := h.DisplayName
+	if name == "" {
+		name = h.DeviceID
+	}
+	var parts []string
+	if h.SMARTStatus != "" && !strings.EqualFold(h.SMARTStatus, "OK") {
+		parts = append(parts, "SMART "+h.SMARTStatus)
+	}
+	if h.ReallocatedSectors > 0 {
+		parts = append(parts, fmt.Sprintf("%d reallocated sectors", h.ReallocatedSectors))
+	}
+	if h.PendingSectors > 0 {
+		parts = append(parts, fmt.Sprintf("%d pending sectors", h.PendingSectors))
+	}
+	if h.Uncorrectable > 0 {
+		parts = append(parts, fmt.Sprintf("%d uncorrectable sectors", h.Uncorrectable))
+	}
+	if h.MediaErrors > 0 {
+		parts = append(parts, fmt.Sprintf("%d media errors", h.MediaErrors))
+	}
+	if h.PercentageUsed > 0 {
+		parts = append(parts, fmt.Sprintf("%d%% endurance used", h.PercentageUsed))
+	}
+	if h.IsOverTemperature() {
+		parts = append(parts, fmt.Sprintf("temperature %dC", h.Temperature))
+	} else if h.IsWarning() && h.Temperature > 0 {
+		parts = append(parts, fmt.Sprintf("temperature %dC", h.Temperature))
+	}
+	if len(parts) == 0 {
+		return name
+	}
+	return name + ": " + strings.Join(parts, ", ")
 }
 
 type Network struct {

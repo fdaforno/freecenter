@@ -8,6 +8,7 @@ import { ObjectHeaderComponent, ObjectTab } from '../../shared/object-header.com
 import { UsageMeterComponent } from '../../shared/usage-meter.component';
 import { VmGridComponent } from '../../shared/vm-grid.component';
 import { DatastoreFilesComponent } from './datastore-files.component';
+import { DatastoreHealthComponent } from './datastore-health.component';
 
 const TABS: ObjectTab[] = [
   { id: 'summary', label: 'Summary' },
@@ -17,7 +18,7 @@ const TABS: ObjectTab[] = [
 
 @Component({
   selector: 'app-datastore-page',
-  imports: [ClarityModule, RouterLink, ObjectHeaderComponent, UsageMeterComponent, VmGridComponent, NotFoundComponent, DatastoreFilesComponent],
+  imports: [ClarityModule, RouterLink, ObjectHeaderComponent, UsageMeterComponent, VmGridComponent, NotFoundComponent, DatastoreFilesComponent, DatastoreHealthComponent],
   template: `
     @if (entry(); as e) {
       <div class="fc-page">
@@ -65,6 +66,12 @@ const TABS: ObjectTab[] = [
                   <div class="card-header">Capacity and Usage</div>
                   <div class="card-block">
                     <app-usage-meter label="Storage" [used]="e.item.capacity_bytes - e.item.free_bytes" [total]="e.item.capacity_bytes" [format]="formatBytes" />
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header">Disk Health</div>
+                  <div class="card-block">
+                    <app-datastore-health [hostId]="e.host.id" [datastore]="e.item.name" />
                   </div>
                 </div>
               </div>

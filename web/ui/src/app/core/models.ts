@@ -142,6 +142,47 @@ export interface Datastore {
   accessible: boolean;
 }
 
+// Disk health (SMART / NVMe), read over SSH by the server.
+export interface DiskHealth {
+  device_id: string;
+  display_name?: string;
+  form_factor?: string;
+  /** Overall SMART assessment ("OK", "FAIL", ...). Empty when unknown. */
+  smart_status?: string;
+  reallocated_sectors?: number;
+  pending_sectors?: number;
+  uncorrectable?: number;
+  /** NVMe: Media and Data Integrity Errors. */
+  media_errors?: number;
+  /** NVMe: percentage of endurance used (0-100). */
+  percentage_used?: number;
+  /** Degrees Celsius, when reported. */
+  temperature?: number;
+  temp_ok?: boolean;
+  /** Controller exposes no SMART/health (typical of some NVMe). */
+  unsupported?: boolean;
+  error?: string;
+}
+
+export interface DatastoreHealth {
+  datastore: string;
+  host_id: string;
+  devices: DiskHealth[];
+}
+
+/** A single active condition worth surfacing at the root summary. */
+export interface Alarm {
+  /** Source: "disk" so far. */
+  kind: string;
+  /** "danger" (red, compromising) or "warning". */
+  severity: string;
+  host_id: string;
+  host_name: string;
+  /** Object the alarm is about: a datastore for "disk" alarms. */
+  target: string;
+  message: string;
+}
+
 export interface Network {
   name: string;
   type: string;
