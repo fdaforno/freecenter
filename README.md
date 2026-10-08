@@ -24,6 +24,7 @@ FreeCenter fills that gap for home labs, small offices and test environments. It
 
 - Register any number of ESXi hosts and browse them in a single inventory, with the familiar four views: hosts, virtual machines, storage, networking.
 - Summary pages for hosts, virtual machines, datastores and networks, with capacity and usage at a glance.
+- **Alarms** on the root summary: disk-health conditions (SMART failures, reallocated sectors, over-temperature) across all hosts, refreshed every 10 minutes.
 - A **Recent Tasks** panel showing every operation, who started it and how it ended, including the ones started through the API or Terraform.
 - Search across all hosts.
 
@@ -64,6 +65,7 @@ The data travels directly between the two hosts, over a dedicated and restricted
 
 - Real-time charts of CPU, memory, disk and network for hosts and virtual machines, covering the last hour.
 - The event log of each host and virtual machine.
+- **Disk health**: SMART and NVMe health of every device backing a datastore — overall status, reallocated/pending/uncorrectable sectors, media errors, endurance used and temperature. Compromising values (reallocated sectors, SMART not OK, over-temperature) are shown in red and also surfaced as **alarms** on the root summary, across all hosts. Probed every 10 minutes in the background; a manual refresh is one click away.
 
 ![Real-time performance of a host](docs/media/host-monitor.png)
 
