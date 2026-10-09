@@ -60,3 +60,7 @@ Creating virtual machines with cloud-init needs `genisoimage` on the machine run
 - Disks can only grow, and not while snapshots exist.
 - The inventory is cached by the server and refreshed in the background; every change invalidates the cache of the host involved.
 - The `esxcli` console only accepts read-only commands from an allow list.
+- **Authentication** supports two modes, available side by side:
+  - *Local*: username and password verified with bcrypt. A 32-byte random token is issued and stored as a SHA-256 hash; it expires after 7 days of inactivity.
+  - *OIDC*: when an administrator configures an external identity provider (e.g. Keycloak), the login page shows a "Sign in with OIDC" button. The flow is authorization code with PKCE: the user is redirected to the provider, comes back with a code, FreeCenter exchanges it, fetches userinfo, maps the OIDC groups to a local role, and issues a normal session token. Users are auto-provisioned on first login.
+- **Authorization** is role-based with five permissions: `manage_vms`, `manage_hosts`, `manage_storage`, `manage_users`, `console_access`. The two built-in roles (`admin` with all permissions, `readonly` with none) cannot be deleted; administrators can create custom roles and assign them to users or map them to OIDC groups.

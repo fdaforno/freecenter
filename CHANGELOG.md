@@ -6,6 +6,26 @@ All notable changes to FreeCenter are listed here. Dates are in UTC.
 
 ### Added
 
+- **OIDC single sign-on.** FreeCenter can now delegate authentication
+  to an external identity provider (e.g. Keycloak). The login page
+  shows a "Sign in with OIDC" button when an administrator configures
+  it. The flow is authorization code: the user is redirected to the
+  provider, comes back with a code, FreeCenter exchanges it, fetches
+  userinfo, maps OIDC groups to a local role, and issues a normal
+  session token. Users are auto-provisioned on first login. The OIDC
+  client secret is encrypted at rest like host passwords.
+- **Granular role-based authorization.** The two-role model
+  (admin/readonly) is replaced by roles with five per-area
+  permissions: manage virtual machines, manage hosts, manage storage,
+  manage users, and console access. The built-in `admin` (all
+  permissions) and `readonly` (none) roles cannot be deleted;
+  administrators can create custom roles and assign them to users or
+  map them to OIDC groups. Every mutating API request is checked
+  against the user's permissions.
+- **Authentication admin page.** A new page at *Admin > Authentication*
+  lets administrators configure the OIDC provider (issuer, client ID
+  and secret, scopes, groups claim name, group→role mapping, default
+  role) and manage role definitions with a visual permission editor.
 - **Disk health (SMART/NVMe).** The datastore Summary now shows a Disk
   Health card with the SMART/NVMe status of every device backing the
   datastore: overall health, reallocated sectors, pending sectors,
@@ -21,6 +41,12 @@ All notable changes to FreeCenter are listed here. Dates are in UTC.
   probed every 10 minutes in the background; a manual Refresh button
   triggers an immediate probe.
 - **New API endpoints.**
+  - `GET /auth/oidc/login`, `GET /auth/oidc/callback` — OIDC browser
+    redirect flow.
+  - `GET /oidc/config`, `PUT /oidc/config` — read / save the OIDC
+    configuration (client secret never returned).
+  - `GET /roles`, `POST /roles`, `PUT /roles/{id}`,
+    `DELETE /roles/{id}` — role CRUD (built-in roles are protected).
   - `GET /hosts/{hid}/datastores/{ds}/health` — cached disk health of
     one datastore.
   - `GET /alarms` — cached alarm list across all hosts.

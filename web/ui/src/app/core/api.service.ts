@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, firstValueFrom } from 'rxjs';
 
-import { AuthService, Role } from './auth.service';
+import { AuthService } from './auth.service';
 import {
   Alarm,
   Backup,
@@ -25,12 +25,14 @@ import {
   HostStatus,
   HostTestResult,
   HostTime,
+  JobStatus,
   MigrateRequest,
   MigrationCheck,
-  JobStatus,
   Network,
+  OIDCConfig,
   PerfData,
   PowerState,
+  Role,
   Schedule,
   ServerTask,
   Snapshot,
@@ -63,7 +65,7 @@ export class ApiService {
   // ---- auth ----
   async login(username: string, password: string): Promise<void> {
     const res = await this.send(
-      this.http.post<{ token: string; username: string; role: Role; must_change_password: boolean }>(`${BASE}/auth/login`, { username, password }),
+      this.http.post<{ token: string; username: string; role: string; must_change_password: boolean }>(`${BASE}/auth/login`, { username, password }),
       false,
     );
     this.auth.setSession(res.token, res.username, res.role, res.must_change_password);
@@ -86,14 +88,36 @@ export class ApiService {
   users(): Promise<User[]> {
     return this.send(this.http.get<User[] | null>(`${BASE}/users`)).then((r) => r ?? []);
   }
-  createUser(username: string, password: string, role: Role): Promise<User> {
+  createUser(username: string, password: string, role: string): Promise<User> {
     return this.send(this.http.post<User>(`${BASE}/users`, { username, password, role }));
   }
-  updateUser(id: string, change: { role?: Role; password?: string }): Promise<unknown> {
+  updateUser(id: string, change: { role?: string; password?: string }): Promise<unknown> {
     return this.send(this.http.put(`${BASE}/users/${encodeURIComponent(id)}`, change));
   }
   deleteUser(id: string): Promise<unknown> {
     return this.send(this.http.delete(`${BASE}/users/${encodeURIComponent(id)}`));
+  }
+
+  // ---- OIDC configuration (administrators only) ----
+  oidcConfig(): Promise<OIDCConfig> {
+    return this.send(this.http.get<OIDCConfig>(`${BASE}/oidc/config`));
+  }
+  updateOIDCConfig(cfg: OIDCConfig): Promise<OIDCConfig> {
+    return this.send(this.http.put<OIDCConfig>(`${BASE}/oidc/config`, cfg));
+  }
+
+  // ---- roles (administrators only for write) ----
+  roles(): Promise<Role[]> {
+    return this.send(this.http.get<Role[] | null>(`${BASE}/roles`)).then((r) => r ?? []);
+  }
+  createRole(role: Role): Promise<Role> {
+    return this.send(this.http.post<Role>(`${BASE}/roles`, role));
+  }
+  updateRole(id: string, role: Role): Promise<Role> {
+    return this.send(this.http.put<Role>(`${BASE}/roles/${encodeURIComponent(id)}`, role));
+  }
+  deleteRole(id: string): Promise<unknown> {
+    return this.send(this.http.delete(`${BASE}/roles/${encodeURIComponent(id)}`));
   }
 
   // ---- hosts ----

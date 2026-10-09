@@ -66,6 +66,18 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("GET /api/v1/auth/me", s.auth(s.handleMe))
 	mux.HandleFunc("POST /api/v1/auth/password", s.auth(s.handleChangePassword))
 
+	// OIDC browser redirects (no auth: the identity provider authenticates)
+	mux.HandleFunc("GET /auth/oidc/login", s.handleOIDCLogin)
+	mux.HandleFunc("GET /auth/oidc/callback", s.handleOIDCCallback)
+
+	// OIDC configuration and role definitions (administrators only)
+	mux.HandleFunc("GET /api/v1/oidc/config", s.auth(s.admin(s.handleGetOIDCConfig)))
+	mux.HandleFunc("PUT /api/v1/oidc/config", s.auth(s.admin(s.handlePutOIDCConfig)))
+	mux.HandleFunc("GET /api/v1/roles", s.auth(s.handleListRoles))
+	mux.HandleFunc("POST /api/v1/roles", s.auth(s.admin(s.handlePutRole)))
+	mux.HandleFunc("PUT /api/v1/roles/{id}", s.auth(s.admin(s.handlePutRole)))
+	mux.HandleFunc("DELETE /api/v1/roles/{id}", s.auth(s.admin(s.handleDeleteRole)))
+
 	// users (administrators only)
 	mux.HandleFunc("GET /api/v1/users", s.auth(s.admin(s.handleListUsers)))
 	mux.HandleFunc("POST /api/v1/users", s.auth(s.admin(s.handleCreateUser)))
@@ -166,8 +178,8 @@ func (s *Server) auth(h http.HandlerFunc) http.HandlerFunc {
 		if ref := taskOf(r); ref != nil {
 			s.tasks.update(ref.task, func(t *model.Task) { t.Initiator = user.Username })
 		}
-		if !user.IsAdmin() && changesSomething(r) {
-			errJSON(w, http.StatusForbidden, "your account is read-only")
+		if s.changesSomething(r) && !s.hasPermission(user, s.permissionFor(r)) {
+			errJSON(w, http.StatusForbidden, "insufficient permissions for this action")
 			return
 		}
 		ctx := context.WithValue(r.Context(), userKey, user)

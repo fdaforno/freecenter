@@ -21,11 +21,26 @@ Every modifying request is recorded in Recent Tasks. A client can label its requ
 | Method | Path | Description |
 |---|---|---|
 | POST | `/auth/login` | `{username,password}` → token, role |
+| GET | `/auth/oidc/login` | redirect to the OIDC provider's authorization endpoint (no token needed) |
+| GET | `/auth/oidc/callback` | OIDC redirect target: exchanges the code, creates/links a local user, issues a session token |
 | POST | `/auth/logout` | ends the session |
 | GET | `/auth/me` | current user |
 | POST | `/auth/password` | `{current,new}`: change one's own password |
-| GET, POST | `/users` | list / create users (`{username,password,role}`, role `admin` or `readonly`); administrators only |
+| GET, POST | `/users` | list / create users (`{username,password,role}`); administrators only |
 | PUT, DELETE | `/users/{id}` | change role or password / delete |
+
+### OIDC configuration and roles (administrators only)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/oidc/config` | current OIDC configuration (client secret never returned) |
+| PUT | `/oidc/config` | `{enabled,issuer,client_id,client_secret,scopes[],claim_name,group_roles{},default_role}` — save; empty secret keeps the existing one |
+| GET | `/roles` | all role definitions with their permissions |
+| POST | `/roles` | create a custom role `{name,description,manage_vms,manage_hosts,manage_storage,manage_users,console_access}` |
+| PUT | `/roles/{id}` | replace a role (built-in roles can be edited but not deleted) |
+| DELETE | `/roles/{id}` | delete a custom role (built-in roles are protected) |
+
+Permissions are checked on every mutating request: a user needs `manage_vms` for VM lifecycle, `manage_hosts` for host configuration, `manage_storage` for file uploads and ISO downloads, `manage_users` for user and role management, and `console_access` for the VM console. The built-in `admin` role has all permissions; `readonly` has none.
 
 ## Hosts
 

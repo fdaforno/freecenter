@@ -363,8 +363,34 @@ export interface Schedule {
 export interface User {
   id: string;
   username: string;
-  role: 'admin' | 'readonly';
+  role: string;
+  oidc_sub?: string;
   created_at: string;
+}
+
+/** OIDC configuration (the client secret is never returned by the API). */
+export interface OIDCConfig {
+  enabled: boolean;
+  issuer: string;
+  client_id: string;
+  client_secret?: string; // write-only: empty on read
+  scopes?: string[];
+  claim_name?: string;
+  group_roles?: Record<string, string>; // Keycloak group → role ID
+  default_role?: string;
+}
+
+/** A role with granular permissions. */
+export interface Role {
+  id: string;
+  name: string;
+  description?: string;
+  builtin?: boolean;
+  manage_vms: boolean;
+  manage_hosts: boolean;
+  manage_storage: boolean;
+  manage_users: boolean;
+  console_access: boolean;
 }
 
 export interface HostService {

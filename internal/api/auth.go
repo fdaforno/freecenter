@@ -55,7 +55,8 @@ func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
 // admin wraps handlers only administrators may call (use inside auth).
 func (s *Server) admin(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !currentUser(r).IsAdmin() {
+		user := currentUser(r)
+		if !s.hasPermission(user, func(pm store.Permissions) bool { return pm.ManageUsers }) {
 			errJSON(w, http.StatusForbidden, "administrator role required")
 			return
 		}
@@ -63,10 +64,22 @@ func (s *Server) admin(h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// changesSomething reports whether a request is off limits for a read-only
-// user: anything that modifies state, plus the VM console (keyboard access).
-// Queries that happen to use POST, and managing one's own session, are allowed.
-func changesSomething(r *http.Request) bool {
+// hasPermission checks whether the user's role grants the given
+// permission. For backward compatibility, legacy admin users (Role == ""
+// or "admin") always have all permissions.
+func (s *Server) hasPermission(user *store.User, perm func(store.Permissions) bool) bool {
+	if user.IsAdmin() {
+		return true
+	}
+	perms := s.store.PermissionsFor(user)
+	return perm(perms)
+}
+
+// changesSomething reports whether a request is off limits for a user
+// without the matching permission: anything that modifies state, plus the
+// VM console (keyboard access). Queries that happen to use POST, and
+// managing one's own session, are allowed.
+func (s *Server) changesSomething(r *http.Request) bool {
 	p := r.URL.Path
 	if strings.HasSuffix(p, "/console") {
 		return true
@@ -76,6 +89,34 @@ func changesSomething(r *http.Request) bool {
 		return false
 	}
 	return !(strings.HasPrefix(p, "/api/v1/auth/") || strings.HasSuffix(p, "/esxcli") || strings.HasSuffix(p, "/migrate/check"))
+}
+
+// permissionFor returns the permission function required for the request,
+// or nil when no specific permission is needed (e.g. read-only operations).
+func (s *Server) permissionFor(r *http.Request) func(store.Permissions) bool {
+	p := r.URL.Path
+	switch {
+	// Console access is a separate permission.
+	case strings.HasSuffix(p, "/console"):
+		return func(pm store.Permissions) bool { return pm.ConsoleAccess }
+	// User management, OIDC config, role definitions.
+	case strings.HasPrefix(p, "/api/v1/users"),
+		strings.HasPrefix(p, "/api/v1/oidc"),
+		strings.HasPrefix(p, "/api/v1/roles"):
+		return func(pm store.Permissions) bool { return pm.ManageUsers }
+	// Host lifecycle and configuration.
+	case strings.HasPrefix(p, "/api/v1/hosts") && !strings.Contains(p, "/vms/") &&
+		!strings.Contains(p, "/datastores/") && !strings.Contains(p, "/backups/"):
+		return func(pm store.Permissions) bool { return pm.ManageHosts }
+	// Storage: file upload, delete, ISO and cloud image downloads.
+	case strings.Contains(p, "/datastores/") && (strings.Contains(p, "/files/") ||
+		strings.Contains(p, "/iso/") || strings.Contains(p, "/cloud-image/")):
+		return func(pm store.Permissions) bool { return pm.ManageStorage }
+	// Everything else that changes something is VM-related (power, clone,
+	// migrate, snapshots, backups, schedules).
+	default:
+		return func(pm store.Permissions) bool { return pm.ManageVMs }
+	}
 }
 
 func validPassword(pw string) string {

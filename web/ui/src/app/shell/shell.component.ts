@@ -67,6 +67,7 @@ import { RecentTasksComponent } from './recent-tasks.component';
               <button type="button" clrDropdownItem (click)="dialogs.changePassword.set(true)">Change Password...</button>
               @if (auth.isAdmin()) {
                 <button type="button" clrDropdownItem routerLink="/admin/users">Users and Roles</button>
+                <button type="button" clrDropdownItem routerLink="/admin/auth">Authentication</button>
               }
               <div class="dropdown-divider" role="separator"></div>
               <button type="button" clrDropdownItem (click)="tasks.clear()">Clear Recent Tasks</button>

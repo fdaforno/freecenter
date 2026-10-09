@@ -4,6 +4,7 @@ import { adminGuard, authGuard } from './core/auth.service';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/login/login.page').then((m) => m.LoginPage) },
+  { path: 'auth/oidc/callback', loadComponent: () => import('./features/login/oidc-callback.page').then((m) => m.OidcCallbackPage) },
   {
     // Full-page VM console, opened in its own tab (no shell around it).
     path: 'console/:hid/:vmid',
@@ -18,6 +19,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'root/summary' },
       { path: 'root', pathMatch: 'full', redirectTo: 'root/summary' },
       { path: 'admin/users', canActivate: [adminGuard], loadComponent: () => import('./features/admin/users.page').then((m) => m.UsersPage) },
+      { path: 'admin/auth', canActivate: [adminGuard], loadComponent: () => import('./features/admin/auth.page').then((m) => m.AuthPage) },
       { path: 'root/:tab', loadComponent: () => import('./features/root/root.page').then((m) => m.RootPage) },
       { path: 'host/:hid', pathMatch: 'full', redirectTo: 'host/:hid/summary' },
       { path: 'host/:hid/:tab', loadComponent: () => import('./features/host/host.page').then((m) => m.HostPage) },

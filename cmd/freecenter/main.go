@@ -53,7 +53,9 @@ func main() {
 	srv := api.NewServer(st, mgr, logger, filepath.Join(dataDir, "known_hosts"))
 
 	mux := http.NewServeMux()
-	mux.Handle("/api/", srv.Routes())
+	routes := srv.Routes()
+	mux.Handle("/api/", routes)
+	mux.Handle("/auth/", routes)
 	mux.Handle("/", web.Handler())
 
 	addr := env("FREECENTER_ADDR", ":8080")

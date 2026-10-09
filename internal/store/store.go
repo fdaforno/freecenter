@@ -37,6 +37,7 @@ type User struct {
 	Username     string    `json:"username"`
 	PasswordHash string    `json:"password_hash"`
 	Role         string    `json:"role,omitempty"`
+	OIDCSub      string    `json:"oidc_sub,omitempty"` // linked OIDC subject (no local password when set)
 	CreatedAt    time.Time `json:"created_at"`
 }
 
@@ -63,6 +64,8 @@ type data struct {
 	Users     []User             `json:"users"`
 	Tokens    []Token            `json:"tokens"`
 	Schedules []model.Schedule   `json:"schedules,omitempty"`
+	OIDC      *OIDCConfig        `json:"oidc,omitempty"`
+	Roles     []Role             `json:"roles,omitempty"`
 }
 
 type Store struct {
@@ -108,6 +111,23 @@ func Open(path string) (*Store, error) {
 			return nil, err
 		}
 	}
+	// Decrypt the OIDC client secret, if any.
+	if s.d.OIDC != nil && s.d.OIDC.ClientSecret != "" {
+		pw, wasEncrypted, err := box.open(s.d.OIDC.ClientSecret)
+		if err != nil {
+			return nil, fmt.Errorf("decrypt the OIDC client secret: %w (is this the right secret key?)", err)
+		}
+		s.d.OIDC.ClientSecret = pw
+		if !wasEncrypted && pw != "" {
+			plain = true
+		}
+	}
+	if plain {
+		if err := s.saveLocked(); err != nil {
+			return nil, err
+		}
+	}
+	s.ensureRoles()
 	return s, nil
 }
 
@@ -122,6 +142,16 @@ func (s *Store) saveLocked() error {
 		}
 		h.Password = enc
 		onDisk.Hosts[i] = h
+	}
+	// Encrypt the OIDC client secret on the copy too.
+	if s.d.OIDC != nil && s.d.OIDC.ClientSecret != "" {
+		enc, err := s.box.seal(s.d.OIDC.ClientSecret)
+		if err != nil {
+			return err
+		}
+		oidcCopy := *s.d.OIDC
+		oidcCopy.ClientSecret = enc
+		onDisk.OIDC = &oidcCopy
 	}
 	s.tokensDirty = false
 	b, err := json.MarshalIndent(&onDisk, "", "  ")
@@ -520,6 +550,30 @@ func (s *Store) DeleteToken(tok string) {
 			return
 		}
 	}
+}
+
+// IssueToken creates a local session token for an existing user (used by
+// the OIDC flow after the external identity provider authenticated them).
+func (s *Store) IssueToken(userID string) string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, err := s.userIndexLocked(userID); err != nil {
+		return ""
+	}
+	raw := make([]byte, 32)
+	if _, err := rand.Read(raw); err != nil {
+		return ""
+	}
+	tok := hex.EncodeToString(raw)
+	live := s.d.Tokens[:0]
+	for _, t := range s.d.Tokens {
+		if time.Since(t.LastUsed) < tokenIdleLimit {
+			live = append(live, t)
+		}
+	}
+	s.d.Tokens = append(live, Token{Hash: hashToken(tok), UserID: userID, CreatedAt: time.Now().UTC(), LastUsed: time.Now().UTC()})
+	_ = s.saveLocked()
+	return tok
 }
 
 func (s *Store) DataDir() string { return filepath.Dir(s.path) }

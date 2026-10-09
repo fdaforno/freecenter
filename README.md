@@ -82,7 +82,8 @@ The data travels directly between the two hosts, over a dedicated and restricted
 
 ### Users and security
 
-- Users with two roles: **administrator**, and **read-only** (can see everything, cannot change anything nor open consoles).
+- **Local authentication** with username/password, and **OIDC single sign-on** through an external identity provider (e.g. Keycloak). A "Sign in with OIDC" button appears on the login page when an administrator configures it.
+- **Granular roles**: administrators define roles with per-area permissions — manage virtual machines, manage hosts, manage storage, manage users, and console access. OIDC groups are mapped to roles, so users get the right permissions automatically when they sign in.
 - Host credentials are stored encrypted and are never returned by the API.
 - The console and all management traffic go through FreeCenter: users only need access to FreeCenter, not to the hosts.
 

@@ -6,25 +6,26 @@ const USER_KEY = 'fc_user';
 const ROLE_KEY = 'fc_role';
 const MUST_CHANGE_KEY = 'fc_must_change_password';
 
-export type Role = 'admin' | 'readonly';
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly router = inject(Router);
   private readonly tokenSig = signal(localStorage.getItem(TOKEN_KEY) ?? '');
   private readonly userSig = signal(localStorage.getItem(USER_KEY) ?? '');
-  private readonly roleSig = signal<Role>((localStorage.getItem(ROLE_KEY) as Role | null) ?? 'admin');
+  private readonly roleSig = signal(localStorage.getItem(ROLE_KEY) ?? 'admin');
   private readonly mustChangeSig = signal(localStorage.getItem(MUST_CHANGE_KEY) === '1');
 
   readonly token = this.tokenSig.asReadonly();
   readonly username = this.userSig.asReadonly();
   readonly role = this.roleSig.asReadonly();
   readonly authenticated = computed(() => this.tokenSig() !== '');
-  readonly isAdmin = computed(() => this.roleSig() === 'admin');
+  readonly isAdmin = computed(() => {
+    const r = this.roleSig();
+    return r === 'admin' || r === '';
+  });
   /** The session was opened with the default password: the UI keeps asking to change it. */
   readonly mustChangePassword = this.mustChangeSig.asReadonly();
 
-  setSession(token: string, username: string, role: Role, mustChangePassword: boolean): void {
+  setSession(token: string, username: string, role: string, mustChangePassword: boolean): void {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, username);
     localStorage.setItem(ROLE_KEY, role);

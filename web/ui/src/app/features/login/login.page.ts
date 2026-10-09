@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClarityModule } from '@clr/angular';
@@ -29,6 +29,13 @@ import { ApiError, ApiService, AuthService, errorMessage } from '../../core';
             <div class="error active">{{ error() }}</div>
           }
           <button type="submit" class="btn btn-primary" [disabled]="busy()">{{ busy() ? 'Signing in...' : 'Login' }}</button>
+          @if (oidcEnabled()) {
+            <div class="oidc-divider"><span>or</span></div>
+            <button type="button" class="btn btn-outline" (click)="oidcLogin()">
+              <cds-icon shape="shield-check" size="16"></cds-icon>
+              Sign in with OIDC
+            </button>
+          }
         </div>
       </form>
     </div>
@@ -37,19 +44,57 @@ import { ApiError, ApiService, AuthService, errorMessage } from '../../core';
     .login-wrapper {
       background: linear-gradient(135deg, #1b2a32 0%, #25404f 45%, #0f5e85 100%);
     }
+    .oidc-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.8rem 0 0.5rem;
+      color: #ccc;
+      font-size: 0.7rem;
+    }
+    .oidc-divider::before,
+    .oidc-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .btn-outline {
+      width: 100%;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
   `,
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
 
   protected username = '';
   protected password = '';
   protected readonly error = signal('');
   protected readonly busy = signal(false);
+  protected readonly oidcEnabled = signal(false);
 
   constructor() {
-    if (inject(AuthService).authenticated()) void this.router.navigate(['/']);
+    if (this.auth.authenticated()) void this.router.navigate(['/']);
+  }
+
+  ngOnInit(): void {
+    this.api.oidcConfig().then((cfg) => this.oidcEnabled.set(cfg.enabled)).catch(() => { /* OIDC not configured */ });
+  }
+
+  protected oidcLogin(): void {
+    window.location.href = '/auth/oidc/login';
   }
 
   protected async submit(): Promise<void> {

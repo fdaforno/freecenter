@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
 
-import { ApiService, AuthService, DialogService, Role, User, errorMessage } from '../../core';
+import { ApiService, AuthService, DialogService, User, errorMessage } from '../../core';
 
 const MIN_LENGTH = 8;
 
@@ -12,7 +12,7 @@ interface UserForm {
   user?: User;
   username: string;
   password: string;
-  role: Role;
+  role: string;
 }
 
 /** Administration > Users and Roles. */
@@ -47,7 +47,7 @@ interface UserForm {
             @for (u of users(); track u.id) {
               <tr>
                 <td class="left">{{ u.username }}{{ u.username === auth.username() ? ' (you)' : '' }}</td>
-                <td class="left">{{ u.role === 'admin' ? 'Administrator' : 'Read-only' }}</td>
+                <td class="left">{{ roleName(u.role) }}</td>
                 <td class="left">{{ u.created_at | date: 'MM/dd/yyyy, h:mm a' }}</td>
                 <td class="right">
                   <button class="btn btn-sm btn-link" (click)="openEdit(u)">Edit...</button>
@@ -83,8 +83,9 @@ interface UserForm {
             <clr-select-container>
               <label>Role</label>
               <select clrSelect name="role" [(ngModel)]="f.role">
-                <option value="admin">Administrator</option>
-                <option value="readonly">Read-only</option>
+                @for (r of allRoles(); track r.id) {
+                  <option [value]="r.id">{{ r.name }}</option>
+                }
               </select>
             </clr-select-container>
             <clr-password-container>
@@ -133,6 +134,7 @@ export class UsersPage implements OnInit {
   protected readonly minLength = MIN_LENGTH;
 
   protected readonly users = signal<User[]>([]);
+  protected readonly allRoles = signal<{ id: string; name: string }[]>([]);
   protected readonly error = signal('');
   protected readonly form = signal<UserForm | null>(null);
   protected readonly formError = signal('');
@@ -140,6 +142,18 @@ export class UsersPage implements OnInit {
 
   ngOnInit(): void {
     void this.load();
+    void this.loadRoles();
+  }
+
+  private async loadRoles(): Promise<void> {
+    try {
+      this.allRoles.set((await this.api.roles()).map((r) => ({ id: r.id, name: r.name })));
+    } catch { /* read-only users can't see roles */ }
+  }
+
+  protected roleName(role: string): string {
+    const r = this.allRoles().find((x) => x.id === role);
+    return r?.name ?? (role === 'admin' ? 'Administrator' : role === 'readonly' ? 'Read-only' : role);
   }
 
   private async load(): Promise<void> {
