@@ -14,9 +14,9 @@ The one practical advantage is automation in a **home lab**: with the REST API a
 
 FreeCenter brings your standalone ESXi hosts together: one web console for all of them, virtual machine lifecycle, templates and clones, migration between hosts, backups, scheduled tasks, monitoring, users and roles, a REST API and a Terraform provider. It runs as a single small container next to your hosts and needs nothing installed on them.
 
-![FreeCenter demo: add a host, deploy a VM from a cloud image, open its console, take a snapshot](docs/media/freecenter-demo.gif)
+![FreeCenter tour: inventory, host summary, monitoring, networking, deploying a VM from a cloud image, its console, a snapshot](docs/media/freecenter-demo.gif)
 
-> The demo above runs against a real ESXi 8 host. A higher-quality version is in [`docs/media/freecenter-demo.mp4`](docs/media/freecenter-demo.mp4).
+> The tour above was taken on real ESXi 8 hosts. A higher-quality version is in [`docs/media/freecenter-demo.mp4`](docs/media/freecenter-demo.mp4).
 
 ## Why
 
@@ -121,15 +121,6 @@ resource "freecenter_vm" "web" {
   }
 }
 ```
-
-## A closer look
-
-| | |
-|---|---|
-| **Add a host**<br>Register an ESXi host with its address and root credentials; its virtual machines, datastores and networks appear immediately. | ![Add a host](docs/media/demo-1-add-host.gif) |
-| **Deploy a virtual machine**<br>From a cloud image, customized by cloud-init. | ![Create a VM](docs/media/demo-2-create-vm.gif) |
-| **Use its console**<br>Power on, open the console in a floating window, sign in. | ![Console](docs/media/demo-3-console.gif) |
-| **Manage it**<br>Snapshots, settings, monitoring, networking. | ![Manage](docs/media/demo-4-manage.gif) |
 
 ## Getting started
 
