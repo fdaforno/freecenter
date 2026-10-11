@@ -1,7 +1,7 @@
 package esxi
 
 import (
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 	"reflect"
 	"strings"
 	"testing"

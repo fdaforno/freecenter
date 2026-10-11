@@ -76,7 +76,7 @@ func (s *SSHClient) DownloadISO(ctx context.Context, datastore, folder, name, ur
 	return nil
 }
 
-// DownloadISOHTTP downloads a URL via HTTP on the FreeCenter server and uploads
+// DownloadISOHTTP downloads a URL via HTTP on the Hostwarden server and uploads
 // it to the datastore via SSH (cat pipe). Used when ESXi BusyBox wget cannot
 // reach the internet (HTTPS limitation).
 func (c *Client) DownloadISOHTTP(ctx context.Context, datastore, folder, name, url string) error {

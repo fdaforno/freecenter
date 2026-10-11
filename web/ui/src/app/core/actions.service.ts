@@ -156,7 +156,7 @@ export class ActionsService {
       okLabel: 'OK',
       danger: true,
       promptLabel: 'Log a reason for this operation',
-      promptDefault: 'FreeCenter UI',
+      promptDefault: 'Hostwarden UI',
     });
     if (reason === null) return;
     await this.track(`Initiate host ${action}`, host.name, () => this.api.hostPower(host.id, action, reason));
@@ -177,7 +177,7 @@ export class ActionsService {
   async removeHost(host: Host): Promise<void> {
     const ok = await this.dialogs.confirm({
       title: 'Remove from Inventory',
-      message: `Remove ${host.name} from FreeCenter? Virtual machines on the ESXi host are not touched.`,
+      message: `Remove ${host.name} from Hostwarden? Virtual machines on the ESXi host are not touched.`,
       okLabel: 'Yes',
       danger: true,
     });

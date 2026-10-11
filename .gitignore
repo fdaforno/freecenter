@@ -1,7 +1,7 @@
 # server state and build output
 /data/
 *.log
-/freecenter
+/hostwarden
 web/dist/
 web/ui/node_modules/
 web/ui/.angular/

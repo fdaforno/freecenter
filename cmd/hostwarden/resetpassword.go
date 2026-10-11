@@ -7,13 +7,13 @@ import (
 
 	"golang.org/x/term"
 
-	"freecenter/internal/store"
+	"hostwarden/internal/store"
 )
 
 // minPasswordLen matches what the API asks of a new password.
 const minPasswordLen = 8
 
-// resetPassword implements "freecenter reset-password [username]": the way
+// resetPassword implements "hostwarden reset-password [username]": the way
 // back in when the administrator's password is lost. It asks for the new
 // password on the terminal and writes it to the state file; a running server
 // keeps its state in memory and must be restarted to see the change.
@@ -60,6 +60,6 @@ func resetPassword(storePath, username string) error {
 	if err := st.SetUserPassword(user.ID, password, ""); err != nil {
 		return err
 	}
-	fmt.Fprintln(os.Stderr, "Password changed. Restart the FreeCenter server for it to take effect.")
+	fmt.Fprintln(os.Stderr, "Password changed. Restart the Hostwarden server for it to take effect.")
 	return nil
 }

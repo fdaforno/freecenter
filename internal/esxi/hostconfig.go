@@ -9,13 +9,13 @@ import (
 
 	"github.com/vmware/govmomi/vim25/mo"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Host configuration: reads go through the SOAP API, changes through SSH
 // (esxcli / init scripts), like every other change to a host.
 
-// sshServiceKey is the service FreeCenter itself depends on for all writes.
+// sshServiceKey is the service Hostwarden itself depends on for all writes.
 const sshServiceKey = "TSM-SSH"
 
 func (c *Client) hostConfig(ctx context.Context, props []string) (*mo.HostSystem, error) {
@@ -81,7 +81,7 @@ func (c *Client) SetService(ctx context.Context, key string, req *model.HostServ
 		return fmt.Errorf("%w: service %s", ErrNotFound, key)
 	}
 	if key == sshServiceKey && (req.Action == "stop" || req.Policy == "off") {
-		return fmt.Errorf("%w: FreeCenter manages this host through SSH; stopping or disabling it would lock FreeCenter out", ErrInvalidState)
+		return fmt.Errorf("%w: Hostwarden manages this host through SSH; stopping or disabling it would lock Hostwarden out", ErrInvalidState)
 	}
 	special := serviceCommands[key]
 	run := func(what, cmd string) error {

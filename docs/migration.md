@@ -1,6 +1,6 @@
 # Migrating virtual machines between hosts
 
-FreeCenter does not do live migration: the memory of a running machine is never transferred while the machine runs. It migrates in the ways a standalone host allows, and tells you up front which one applies and how long the machine will be stopped.
+Hostwarden does not do live migration: the memory of a running machine is never transferred while the machine runs. It migrates in the ways a standalone host allows, and tells you up front which one applies and how long the machine will be stopped.
 
 ## The four cases
 
@@ -11,14 +11,14 @@ FreeCenter does not do live migration: the memory of a running machine is never 
 | 3 | Running machine, with pre-copy | a temporary snapshot freezes the disks, which are copied while the machine keeps running; then the machine is stopped and only what changed is copied | the time to copy the changes, not the whole disks |
 | 4 | Running machine, hosts with different CPUs | the guest is shut down, the machine is copied and powered on on the target | copy and boot |
 
-A suspended machine can only resume on a compatible CPU: across different CPUs FreeCenter proposes case 4. Case 3 combines with 2 and 4.
+A suspended machine can only resume on a compatible CPU: across different CPUs Hostwarden proposes case 4. Case 3 combines with 2 and 4.
 
 In every case the source copy is removed only once the machine is registered on the target and, if it was running, started. If anything fails, the copy on the target is deleted and the machine is brought back on the source.
 
 ## How it is done
 
-- **Direct transfer.** The source host copies to the target host with `scp`: the data does not go through the FreeCenter server.
-- **Keys.** On the first migration FreeCenter creates a key pair on the source host (ECDSA: the SSH server of ESXi runs in FIPS mode and rejects ed25519). The private key never leaves the host. The public key is authorized on the target for the address of the source only, the `sshClient` firewall rule is enabled on the source, and the host key of the target is pinned to the one FreeCenter itself sees.
+- **Direct transfer.** The source host copies to the target host with `scp`: the data does not go through the Hostwarden server.
+- **Keys.** On the first migration Hostwarden creates a key pair on the source host (ECDSA: the SSH server of ESXi runs in FIPS mode and rejects ed25519). The private key never leaves the host. The public key is authorized on the target for the address of the source only, the `sshClient` firewall rule is enabled on the source, and the host key of the target is pinned to the one Hostwarden itself sees.
 - **Pre-copy.** The disks of a running machine are locked and cannot be read directly. A temporary snapshot freezes them, and `vmkfstools -i` clones them into a staging folder next to the machine (which needs free space on the source datastore). The staging copy travels to the target while the machine works. Then the machine is stopped, only the snapshot deltas and the configuration are copied, the deltas are linked to the new base disks, and the snapshot is consolidated on the target with the machine already running again. Not available when the machine already has snapshots.
 - **Shared datastore.** When the target datastore is the very same volume on both hosts, nothing is copied: the machine is stopped, unregistered on the source, registered and started on the target. On failure it is registered on the source again. Files are never deleted.
 - **Thin disks.** The copy allocates them in full. The option "Keep thin disks thin" makes them thin again with `vmkfstools -K` (skipped when the machine has snapshots).

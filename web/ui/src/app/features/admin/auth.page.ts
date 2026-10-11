@@ -33,7 +33,7 @@ import { ApiService, OIDCConfig, Role, errorMessage } from '../../core';
                 <clr-input-container>
                   <label>Issuer URL</label>
                   <input type="text" clrInput name="issuer" [(ngModel)]="cfg.issuer"
-                    placeholder="http://192.168.251.20:30081/realms/freecenter" />
+                    placeholder="http://192.168.251.20:30081/realms/hostwarden" />
                 </clr-input-container>
 
                 <clr-input-container>
@@ -59,7 +59,7 @@ import { ApiService, OIDCConfig, Role, errorMessage } from '../../core';
                 </clr-input-container>
 
                 <h6>Group → Role Mapping</h6>
-                <p class="fc-muted">Map Keycloak groups to FreeCenter roles. Users in a group get the permissions of the mapped role.</p>
+                <p class="fc-muted">Map Keycloak groups to Hostwarden roles. Users in a group get the permissions of the mapped role.</p>
                 @for (item of groupMappings(); track $index) {
                   <div class="mapping-row">
                     <input type="text" class="clr-input" [ngModel]="item.group" (ngModelChange)="updateGroup($index, $event, item.role)"

@@ -12,7 +12,7 @@ const CONNECT_TIMEOUT_MS = 15000;
 /**
  * Web console of a virtual machine: a toolbar and the screen, filling its
  * container. The WebMKS stream of ESXi is RFB over WebSocket, relayed by the
- * FreeCenter server. Used full-page in its own tab and inside the console
+ * Hostwarden server. Used full-page in its own tab and inside the console
  * window of the shell.
  */
 @Component({

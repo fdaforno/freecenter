@@ -8,7 +8,7 @@ import (
 	"github.com/vmware/govmomi/vim25/mo"
 	"github.com/vmware/govmomi/vim25/types"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 var vmPropsDetail = []string{"name", "summary", "config", "snapshot"}
@@ -235,12 +235,16 @@ func mapVM(m *mo.VirtualMachine) *model.VM {
 }
 
 // templateKey is the VMX entry that marks a VM as a template. Standalone
-// ESXi has no template concept, so FreeCenter keeps its own flag in the VMX.
-const templateKey = "freecenter.template"
+// ESXi has no template concept, so Hostwarden keeps its own flag in the VMX.
+const templateKey = "hostwarden.template"
+
+// legacyTemplateKey is the flag written by versions released as FreeCenter.
+// It is still recognised, and removed whenever the flag is rewritten.
+const legacyTemplateKey = "freecenter.template"
 
 func isTemplate(extra []types.BaseOptionValue) bool {
 	for _, o := range extra {
-		if ov := o.GetOptionValue(); ov.Key == templateKey {
+		if ov := o.GetOptionValue(); ov.Key == templateKey || ov.Key == legacyTemplateKey {
 			v, _ := ov.Value.(string)
 			return strings.EqualFold(v, "TRUE")
 		}

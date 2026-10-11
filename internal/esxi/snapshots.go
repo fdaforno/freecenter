@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Snapshots are managed via SSH (vim-cmd vmsvc/snapshot.*), like every other

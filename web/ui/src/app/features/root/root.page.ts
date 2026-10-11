@@ -27,13 +27,13 @@ const TABS: ObjectTab[] = [
   imports: [ClarityModule, ObjectHeaderComponent, UsageMeterComponent, HostGridComponent, VmGridComponent, DatastoreGridComponent, NetworkGridComponent, ProtectionComponent, AlarmsComponent],
   template: `
     <div class="fc-page">
-      <app-object-header icon="building" title="FreeCenter" [base]="['/root']" [tabs]="tabs">
+      <app-object-header icon="building" title="Hostwarden" [base]="['/root']" [tabs]="tabs">
         <clr-dropdown>
           <button class="btn btn-link btn-sm fc-actions" clrDropdownTrigger>
             Actions <cds-icon shape="angle" direction="down" size="12"></cds-icon>
           </button>
           <clr-dropdown-menu *clrIfOpen clrPosition="bottom-left">
-            <h4 class="dropdown-header">Actions - FreeCenter</h4>
+            <h4 class="dropdown-header">Actions - Hostwarden</h4>
             <button clrDropdownItem (click)="dialogs.hostForm.set({})">Add Host...</button>
             <button clrDropdownItem [clrDisabled]="stats().hostsConnected === 0" (click)="dialogs.newVm.set({})">New Virtual Machine...</button>
           </clr-dropdown-menu>

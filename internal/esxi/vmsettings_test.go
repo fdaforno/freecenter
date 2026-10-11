@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 func ptr[T any](v T) *T { return &v }

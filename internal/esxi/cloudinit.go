@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // CloudImageCatalog is the list of known cloud images that can be downloaded.

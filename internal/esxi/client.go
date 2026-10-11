@@ -19,7 +19,7 @@ import (
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 var (

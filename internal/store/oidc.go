@@ -12,7 +12,7 @@ import (
 // ClientSecret is sealed at rest like host passwords.
 type OIDCConfig struct {
 	Enabled      bool              `json:"enabled"`
-	Issuer       string            `json:"issuer"`              // e.g. http://192.168.251.20:30081/realms/freecenter
+	Issuer       string            `json:"issuer"`              // e.g. http://192.168.251.20:30081/realms/hostwarden
 	ClientID     string            `json:"client_id"`           // encrypted at rest in saveLocked
 	ClientSecret string            `json:"client_secret"`       // encrypted at rest
 	Scopes       []string          `json:"scopes,omitempty"`    // default: ["openid","profile","email"]

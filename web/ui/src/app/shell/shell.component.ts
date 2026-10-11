@@ -50,7 +50,7 @@ import { RecentTasksComponent } from './recent-tasks.component';
               <rect x="2" y="9.5" width="14" height="5" rx="1.5" />
               <rect x="2" y="16" width="8" height="5" rx="1.5" />
             </svg>
-            <span class="title">FreeCenter</span>
+            <span class="title">Hostwarden</span>
           </a>
         </div>
         <form class="fc-search" (ngSubmit)="search()">

@@ -11,7 +11,7 @@ import (
 	"github.com/vmware/govmomi/vim25/mo"
 	"github.com/vmware/govmomi/vim25/types"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Datastores lists the host datastores.

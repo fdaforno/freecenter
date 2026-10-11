@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/store"
+	"hostwarden/internal/store"
 )
 
 // oidcDiscovery is the well-known OpenID Connect configuration.
@@ -312,7 +312,7 @@ func fetchUserinfo(userinfoURL, accessToken string) (*userinfoResponse, error) {
 	return &info, nil
 }
 
-// resolveRole maps OIDC groups to a FreeCenter role ID, falling back to
+// resolveRole maps OIDC groups to a Hostwarden role ID, falling back to
 // the configured default role.
 func resolveRole(cfg *store.OIDCConfig, info *userinfoResponse) string {
 	for _, g := range info.Groups {

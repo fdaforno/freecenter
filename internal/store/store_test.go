@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 func openTemp(t *testing.T) (*Store, string) {

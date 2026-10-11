@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 var (

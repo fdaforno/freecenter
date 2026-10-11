@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/model"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/model"
 )
 
 // jobTimeout bounds a background job; large disks over a slow link take hours.

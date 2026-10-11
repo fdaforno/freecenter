@@ -15,9 +15,9 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/model"
-	"freecenter/internal/store"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/model"
+	"hostwarden/internal/store"
 )
 
 var hostNameRE = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._-]*$`)
@@ -406,7 +406,7 @@ func (s *Server) handleDownloadISO(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-		// fallback: download on FreeCenter server + upload via SSH cat pipe
+		// fallback: download on Hostwarden server + upload via SSH cat pipe
 		c, cerr := s.mgr.Client(hid)
 		if cerr != nil {
 			status.Status = "error"
@@ -591,7 +591,7 @@ func (s *Server) handleHostPower(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if req.Reason == "" {
-		req.Reason = "freecenter API request"
+		req.Reason = "hostwarden API request"
 	}
 	if !h.SSHEnabled {
 		errJSON(w, http.StatusBadRequest, "host power operations require ssh_enabled host (uses esxcli system shutdown)")

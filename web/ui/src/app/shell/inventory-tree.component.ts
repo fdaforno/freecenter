@@ -38,7 +38,7 @@ const VIEWS: { id: NavView; icon: string; title: string }[] = [
       <clr-tree>
         <clr-tree-node [clrExpanded]="true">
           <a class="clr-treenode-link" routerLink="/root" routerLinkActive="active">
-            <app-object-icon shape="building" />FreeCenter
+            <app-object-icon shape="building" />Hostwarden
           </a>
 
           <!-- One flat @for per view: nodes nested in @switch would not be projected as tree children. -->

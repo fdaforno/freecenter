@@ -19,22 +19,22 @@ COPY internal ./internal
 COPY web/embed.go ./web/embed.go
 COPY --from=ui /src/web/dist ./web/dist
 
-RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/freecenter ./cmd/freecenter
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/hostwarden ./cmd/hostwarden
 
 # ---------- run ----------
 FROM alpine:3.20
-RUN adduser -D -u 10001 -g freecenter freecenter && apk add --no-cache ca-certificates qemu-img cdrkit
-COPY --from=build /out/freecenter /usr/local/bin/freecenter
-COPY LICENSE NOTICE /usr/share/licenses/freecenter/
+RUN adduser -D -u 10001 -g hostwarden hostwarden && apk add --no-cache ca-certificates qemu-img cdrkit
+COPY --from=build /out/hostwarden /usr/local/bin/hostwarden
+COPY LICENSE NOTICE /usr/share/licenses/hostwarden/
 
-ENV FREECENTER_ADDR=:8080 \
-    FREECENTER_DATA=/data
-RUN mkdir -p /data && chown freecenter:freecenter /data
-USER freecenter
+ENV HOSTWARDEN_ADDR=:8080 \
+    HOSTWARDEN_DATA=/data
+RUN mkdir -p /data && chown hostwarden:hostwarden /data
+USER hostwarden
 VOLUME ["/data"]
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1
 
-ENTRYPOINT ["freecenter"]
+ENTRYPOINT ["hostwarden"]

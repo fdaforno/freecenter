@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"freecenter/internal/store"
+	"hostwarden/internal/store"
 )
 
 // defaultPassword is the bootstrap administrator password: logging in with it

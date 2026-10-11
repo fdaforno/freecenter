@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 var vmNameRE = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._-]*$`)

@@ -177,7 +177,7 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
               }
             </tbody>
           </table>
-          <p class="fc-muted">The image is downloaded and converted by the FreeCenter server, then uploaded to the datastore; progress is in Recent Tasks and the list above refreshes when it is done.</p>
+          <p class="fc-muted">The image is downloaded and converted by the Hostwarden server, then uploaded to the datastore; progress is in Recent Tasks and the list above refreshes when it is done.</p>
         </clr-wizard-page>
       }
 

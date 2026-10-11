@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/model"
-	"freecenter/internal/store"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/model"
+	"hostwarden/internal/store"
 )
 
 type isoStatus struct {
@@ -171,7 +171,7 @@ func (s *Server) auth(h http.HandlerFunc) http.HandlerFunc {
 		}
 		user, err := s.store.UserByToken(tok)
 		if err != nil {
-			w.Header().Set("WWW-Authenticate", `Bearer realm="freecenter"`)
+			w.Header().Set("WWW-Authenticate", `Bearer realm="hostwarden"`)
 			errJSON(w, http.StatusUnauthorized, "authentication required")
 			return
 		}

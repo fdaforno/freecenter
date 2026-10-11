@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 func TestNextRun(t *testing.T) {

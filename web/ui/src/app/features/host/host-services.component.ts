@@ -3,7 +3,7 @@ import { ClarityModule } from '@clr/angular';
 
 import { ActionsService, ApiService, HostService, errorMessage } from '../../core';
 
-/** The service FreeCenter itself uses for every change on the host. */
+/** The service Hostwarden itself uses for every change on the host. */
 const SSH_KEY = 'TSM-SSH';
 
 /** Host services: state, start/stop/restart and startup policy. */
@@ -49,7 +49,7 @@ const SSH_KEY = 'TSM-SSH';
         }
       </tbody>
     </table>
-    <p class="fc-muted">The SSH service cannot be stopped from here: FreeCenter applies every change to the host through it.</p>
+    <p class="fc-muted">The SSH service cannot be stopped from here: Hostwarden applies every change to the host through it.</p>
   `,
   styles: `
     .table {

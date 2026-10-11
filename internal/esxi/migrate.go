@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // VM migration between two standalone ESXi hosts.
@@ -22,13 +22,13 @@ import (
 // This is a cold (or suspended) migration, not a live one: the VM is stopped
 // (or suspended), its folder is copied host-to-host over SSH, and it is
 // registered and started on the target.
-// The data never passes through FreeCenter: the source host pushes it directly
+// The data never passes through Hostwarden: the source host pushes it directly
 // to the target with a key pair created for that purpose.
 
 const (
 	// migrateKeyPath is the private key the source host uses to reach other
 	// hosts. It is generated on the host and never leaves it.
-	migrateKeyPath = "/etc/ssh/keys-root/freecenter_migrate"
+	migrateKeyPath = "/etc/ssh/keys-root/hostwarden_migrate"
 	authorizedKeys = "/etc/ssh/keys-root/authorized_keys"
 
 	guestShutdownTimeout = 3 * time.Minute
@@ -282,7 +282,7 @@ func MigrateVM(ctx context.Context, src, dst *Client, id string, req *model.Migr
 			removeMigrateSnapshot(rctx, src, id)
 			return fmt.Errorf("%w; the virtual machine was not stopped", cause)
 		}
-		if _, err := src.CreateSnapshot(ctx, id, &model.CreateSnapshotRequest{Name: migrateSnapshot, Description: "Temporary snapshot taken by FreeCenter for a migration"}); err != nil {
+		if _, err := src.CreateSnapshot(ctx, id, &model.CreateSnapshotRequest{Name: migrateSnapshot, Description: "Temporary snapshot taken by Hostwarden for a migration"}); err != nil {
 			return nil, undo(err)
 		}
 		var descriptors []string
@@ -479,7 +479,7 @@ func MigrateVM(ctx context.Context, src, dst *Client, id string, req *model.Migr
 var diskExtentRE = regexp.MustCompile(`-(flat|delta|sesparse|ctk|rdm|rdmp)\.vmdk$`)
 
 // migrateSnapshot names the temporary snapshot a pre-copy migration takes.
-const migrateSnapshot = "freecenter-migrate"
+const migrateSnapshot = "hostwarden-migrate"
 
 // removeMigrateSnapshot deletes the temporary migration snapshot of a VM, if
 // it has one, and reports whether none is left.
@@ -651,11 +651,11 @@ func sshPort(rec *model.HostRecord) int {
 // prepareHostChannel makes src able to open SSH connections to dst without a
 // password: a key pair on src (created once), its public half authorised on
 // dst (limited to connections coming from src), the outgoing SSH firewall rule
-// on src, and dst's host key pinned to the one FreeCenter itself sees.
+// on src, and dst's host key pinned to the one Hostwarden itself sees.
 // It returns the ssh/scp options to use on src.
 func prepareHostChannel(ctx context.Context, src, dst *Client) (string, error) {
 	// FIPS-mode OpenSSH on ESXi rejects ed25519: use ECDSA.
-	keygen := fmt.Sprintf("[ -f %[1]s ] || /usr/lib/vmware/openssh/bin/ssh-keygen -q -t ecdsa -b 256 -N '' -C freecenter-migrate -f %[1]s; chmod 600 %[1]s; cat %[1]s.pub", migrateKeyPath)
+	keygen := fmt.Sprintf("[ -f %[1]s ] || /usr/lib/vmware/openssh/bin/ssh-keygen -q -t ecdsa -b 256 -N '' -C hostwarden-migrate -f %[1]s; chmod 600 %[1]s; cat %[1]s.pub", migrateKeyPath)
 	pub, err := src.sshRun(ctx, keygen)
 	if err != nil {
 		return "", fmt.Errorf("create the migration key on %s: %w (output: %s)", src.rec.Name, err, strings.TrimSpace(pub))
@@ -667,7 +667,7 @@ func prepareHostChannel(ctx context.Context, src, dst *Client) (string, error) {
 	if _, _, _, _, err := ssh.ParseAuthorizedKey([]byte(fields[0] + " " + fields[1])); err != nil {
 		return "", fmt.Errorf("create the migration key on %s: %w", src.rec.Name, err)
 	}
-	entry := fields[0] + " " + fields[1] + " freecenter-migrate:" + src.rec.Name
+	entry := fields[0] + " " + fields[1] + " hostwarden-migrate:" + src.rec.Name
 	if ip := net.ParseIP(hostOf(src.rec.Address)); ip != nil {
 		entry = `from="` + ip.String() + `" ` + entry
 	}
@@ -683,7 +683,7 @@ func prepareHostChannel(ctx context.Context, src, dst *Client) (string, error) {
 	if algo == ssh.KeyAlgoRSA {
 		algo = ssh.KeyAlgoRSASHA512 + "," + ssh.KeyAlgoRSASHA256
 	}
-	knownHosts := "/tmp/freecenter_known_hosts_" + dst.rec.ID
+	knownHosts := "/tmp/hostwarden_known_hosts_" + dst.rec.ID
 	setup := fmt.Sprintf("echo %s > %s && esxcli network firewall ruleset set -e true -r sshClient", shq(line), shq(knownHosts))
 	if out, err := src.sshRun(ctx, setup); err != nil {
 		return "", fmt.Errorf("prepare %s for outgoing SSH: %w (output: %s)", src.rec.Name, err, strings.TrimSpace(out))

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/model"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/model"
 )
 
 // hostOp runs a host configuration call with the usual plumbing: resolve the

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // CloneProgress receives the current phase of a clone.
@@ -126,8 +126,10 @@ func (c *Client) cloneFolder(ctx context.Context, srcVMX string, thinDisk func(d
 		doc.set("nvram", req.Name+".nvram")
 	}
 	if req.Template {
+		doc.removePrefix(legacyTemplateKey)
 		doc.set(templateKey, "TRUE")
 	} else {
+		doc.removePrefix(legacyTemplateKey)
 		doc.removePrefix(templateKey)
 	}
 

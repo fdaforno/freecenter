@@ -13,8 +13,8 @@ import { ApiError, ApiService, AuthService, errorMessage } from '../../core';
       <form class="login" (ngSubmit)="submit()">
         <section class="title">
           <h3 class="welcome">Welcome to</h3>
-          FreeCenter
-          <h5 class="hint">Use your FreeCenter credentials to sign in</h5>
+          Hostwarden
+          <h5 class="hint">Use your Hostwarden credentials to sign in</h5>
         </section>
         <div class="login-group">
           <clr-input-container>
@@ -37,7 +37,7 @@ import { ApiError, ApiService, AuthService, errorMessage } from '../../core';
             </button>
           }
         </div>
-        <p class="legal">FreeCenter is an independent open-source project, not affiliated with or endorsed by VMware or Broadcom.</p>
+        <p class="legal">Hostwarden is an independent open-source project, not affiliated with or endorsed by VMware or Broadcom.</p>
       </form>
     </div>
   `,

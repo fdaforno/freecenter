@@ -14,12 +14,12 @@ import (
 	"github.com/vmware/govmomi/vim25/mo"
 	"github.com/vmware/govmomi/vim25/types"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // All mutating operations go through SSH (vim-cmd / vmkfstools / VMX editing).
 
-var ErrSSHDisabled = fmt.Errorf("ssh is not enabled for this host; FreeCenter makes every change over SSH, so writes require ssh_enabled=true")
+var ErrSSHDisabled = fmt.Errorf("ssh is not enabled for this host; Hostwarden makes every change over SSH, so writes require ssh_enabled=true")
 
 func (c *Client) sshRun(ctx context.Context, cmd string) (string, error) {
 	if c.ssh == nil {

@@ -10,7 +10,7 @@ import (
 	"github.com/vmware/govmomi/performance"
 	"github.com/vmware/govmomi/vim25/types"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Real-time statistics are sampled by ESXi every 20 seconds and kept for one hour.

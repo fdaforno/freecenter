@@ -1,4 +1,4 @@
-module freecenter
+module hostwarden
 
 go 1.26.5
 

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/store"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/store"
 )
 
 type ctxKey string

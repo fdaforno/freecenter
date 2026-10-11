@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/model"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/model"
 )
 
 // migrationClients resolves the source (path) and target (body) hosts of a migration request.

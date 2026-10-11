@@ -52,7 +52,7 @@ const REFRESH_MS = 15000;
           }
         </tbody>
       </table>
-      <p class="fc-muted">Backups are folders in freecenter-backups on each datastore. Restoring creates a new virtual machine and leaves the backup in place.</p>
+      <p class="fc-muted">Backups are folders in hostwarden-backups on each datastore. Restoring creates a new virtual machine and leaves the backup in place.</p>
     } @else {
       <table class="table table-compact">
         <thead>

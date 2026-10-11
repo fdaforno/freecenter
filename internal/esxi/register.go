@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // vmxFileRE accepts a configuration file inside a datastore: no quotes or

@@ -14,17 +14,17 @@ import (
 	"strings"
 )
 
-// Host passwords must be usable (FreeCenter logs in to ESXi with them), so
+// Host passwords must be usable (Hostwarden logs in to ESXi with them), so
 // they cannot be hashed; they are encrypted with AES-256-GCM instead.
 //
-// The key comes from FREECENTER_SECRET_KEY when set, otherwise from the file
+// The key comes from HOSTWARDEN_SECRET_KEY when set, otherwise from the file
 // secret.key next to the store (created on first use, mode 0600). This
 // protects a store.json that leaks on its own - a backup, a copy, a support
 // bundle. It does not protect against someone who can read the whole data
 // directory: keep the key elsewhere (the environment variable) for that.
 
 const (
-	secretEnv    = "FREECENTER_SECRET_KEY"
+	secretEnv    = "HOSTWARDEN_SECRET_KEY"
 	secretFile   = "secret.key"
 	sealedPrefix = "enc:v1:"
 )
@@ -35,7 +35,11 @@ type secretBox struct {
 
 func loadSecretBox(dataDir string) (*secretBox, error) {
 	var key [32]byte
-	if env := os.Getenv(secretEnv); env != "" {
+	env := os.Getenv(secretEnv)
+	if env == "" {
+		env = os.Getenv("FREECENTER_SECRET_KEY") // name used before the rename
+	}
+	if env != "" {
 		key = sha256.Sum256([]byte(env))
 	} else {
 		path := filepath.Join(dataDir, secretFile)

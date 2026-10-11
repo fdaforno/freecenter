@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // applyVMSettings applies the VM options and device changes of req that are
@@ -74,8 +74,10 @@ func applyVMSettings(doc *vmxDoc, req *model.UpdateVMRequest, addrs map[int32]de
 			return false, err
 		}
 		if *req.Template {
+			doc.removePrefix(legacyTemplateKey)
 			doc.set(templateKey, "TRUE")
 		} else {
+			doc.removePrefix(legacyTemplateKey)
 			doc.removePrefix(templateKey)
 		}
 	}

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // maxEvents caps the event list sent to the UI.

@@ -1,8 +1,17 @@
 # Changelog
 
-All notable changes to FreeCenter are listed here. Dates are in UTC.
+All notable changes to Hostwarden are listed here. Dates are in UTC.
 
 ## [Unreleased]
+
+### Changed
+
+- **Renamed to Hostwarden.** The project was called FreeCenter. The
+  binary, Docker image and environment variables now use the new name.
+  Existing installations keep working: `FREECENTER_*` variables are
+  still read, templates created before the rename are still recognised,
+  and `freecenter-backups` folders are renamed to `hostwarden-backups`
+  the first time backups are listed.
 
 ### Security
 
@@ -14,14 +23,14 @@ All notable changes to FreeCenter are listed here. Dates are in UTC.
 
 ### Added
 
-- **Password recovery.** `freecenter reset-password [username]` sets a
+- **Password recovery.** `hostwarden reset-password [username]` sets a
   new password from the terminal when the administrator's one is lost.
 
-- **OIDC single sign-on.** FreeCenter can now delegate authentication
+- **OIDC single sign-on.** Hostwarden can now delegate authentication
   to an external identity provider (e.g. Keycloak). The login page
   shows a "Sign in with OIDC" button when an administrator configures
   it. The flow is authorization code: the user is redirected to the
-  provider, comes back with a code, FreeCenter exchanges it, fetches
+  provider, comes back with a code, Hostwarden exchanges it, fetches
   userinfo, maps OIDC groups to a local role, and issues a normal
   session token. Users are auto-provisioned on first login. The OIDC
   client secret is encrypted at rest like host passwords.
@@ -80,7 +89,7 @@ All notable changes to FreeCenter are listed here. Dates are in UTC.
 
 ### Added
 
-- Initial public release of FreeCenter: one web console for all your
+- Initial public release of Hostwarden: one web console for all your
   standalone ESXi hosts, with virtual machine lifecycle, templates and
   clones, migration between hosts, backups, scheduled tasks, monitoring,
   users and roles, a REST API and a Terraform provider.

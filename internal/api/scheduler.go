@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Scheduled snapshots and backups.
@@ -122,7 +122,7 @@ func (s *Server) runSchedule(ctx context.Context, sc *model.Schedule, progress f
 	}
 	progress("Taking the snapshot")
 	name := autoSnapshotPrefix + time.Now().UTC().Format("20060102-150405")
-	snaps, err := c.CreateSnapshot(ctx, sc.VMID, &model.CreateSnapshotRequest{Name: name, Description: "Scheduled snapshot (FreeCenter)"})
+	snaps, err := c.CreateSnapshot(ctx, sc.VMID, &model.CreateSnapshotRequest{Name: name, Description: "Scheduled snapshot (Hostwarden)"})
 	if err != nil {
 		return err
 	}

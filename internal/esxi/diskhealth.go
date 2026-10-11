@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Disk health is read over SSH: a standalone host does not expose

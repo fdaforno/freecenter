@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Recent Tasks.

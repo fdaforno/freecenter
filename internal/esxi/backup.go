@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Backups.
 //
 // A backup is a self-contained copy of a VM in
 //
-//	/vmfs/volumes/<datastore>/freecenter-backups/<vm name>/<YYYYMMDD-HHMMSS>/
+//	/vmfs/volumes/<datastore>/hostwarden-backups/<vm name>/<YYYYMMDD-HHMMSS>/
 //
 // with every disk consolidated into a single thin VMDK and the VMX pointing
 // at those copies, so the folder can be registered (restored) as a VM. A
@@ -25,9 +25,11 @@ import (
 // the copy is then crash-consistent, like a machine that lost power.
 
 const (
-	backupRoot     = "freecenter-backups"
-	backupSnapshot = "freecenter-backup"
-	stampLayout    = "20060102-150405"
+	backupRoot = "hostwarden-backups"
+	// legacyBackupRoot is the folder used by versions released as FreeCenter.
+	legacyBackupRoot = "freecenter-backups"
+	backupSnapshot   = "hostwarden-backup"
+	stampLayout      = "20060102-150405"
 )
 
 var stampRE = regexp.MustCompile(`^\d{8}-\d{6}$`)
@@ -82,7 +84,7 @@ func (c *Client) BackupVM(ctx context.Context, id, datastore string, keep int, p
 	// A running VM locks its disks: freeze them with a snapshot, which vmkfstools can clone.
 	if layout.power == "poweredOn" {
 		report("Taking a temporary snapshot")
-		if _, err := c.CreateSnapshot(ctx, id, &model.CreateSnapshotRequest{Name: backupSnapshot, Description: "Temporary snapshot taken by FreeCenter for a backup"}); err != nil {
+		if _, err := c.CreateSnapshot(ctx, id, &model.CreateSnapshotRequest{Name: backupSnapshot, Description: "Temporary snapshot taken by Hostwarden for a backup"}); err != nil {
 			return fail(err)
 		}
 		defer func() {
@@ -145,7 +147,7 @@ func removeSnapshotNamed(ctx context.Context, c *Client, id, name string) bool {
 
 // backupStamps lists the backup stamps of one VM on a datastore, oldest first.
 func (c *Client) backupStamps(ctx context.Context, datastore, vmName string) ([]string, error) {
-	out, err := c.sshRun(ctx, "ls "+shq("/vmfs/volumes/"+datastore+"/"+backupRoot+"/"+vmName)+" 2>/dev/null; true")
+	out, err := c.sshRun(ctx, adoptLegacyBackups(datastore)+"ls "+shq("/vmfs/volumes/"+datastore+"/"+backupRoot+"/"+vmName)+" 2>/dev/null; true")
 	if err != nil {
 		return nil, err
 	}
@@ -211,6 +213,7 @@ func (c *Client) ListBackups(ctx context.Context) ([]model.Backup, error) {
 		if !ds.Accessible {
 			continue
 		}
+		script.WriteString(adoptLegacyBackups(ds.Name))
 		root := "/vmfs/volumes/" + ds.Name + "/" + backupRoot
 		// One line per backup: datastore|vm|stamp|allocated KB.
 		fmt.Fprintf(&script, "for d in %s/*/*/; do [ -d \"$d\" ] || continue; s=$(basename \"$d\"); v=$(basename \"$(dirname \"$d\")\"); echo %s\"|$v|$s|$(du -sk \"$d\" | cut -f1)\"; done 2>/dev/null\n", shq(root), shq(ds.Name))
@@ -295,4 +298,12 @@ func ShipBackup(ctx context.Context, src, dst *Client, srcDS, vmName, stamp, dst
 		return dst.PruneBackups(ctx, dstDS, vmName, keep)
 	}
 	return nil
+}
+
+// adoptLegacyBackups returns a shell line that renames the backup folder of a
+// datastore from its FreeCenter-era name to the current one, when only the
+// old folder exists, so existing backups stay listed and restorable.
+func adoptLegacyBackups(datastore string) string {
+	base := "/vmfs/volumes/" + datastore + "/"
+	return fmt.Sprintf("[ -d %[1]s ] && [ ! -e %[2]s ] && mv %[1]s %[2]s; ", shq(base+legacyBackupRoot), shq(base+backupRoot))
 }

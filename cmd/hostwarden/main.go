@@ -8,18 +8,23 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 	_ "time/tzdata" // schedules are defined in the user's time zone; the container has no zone database
 
-	"freecenter/internal/api"
-	"freecenter/internal/esxi"
-	"freecenter/internal/store"
-	"freecenter/web"
+	"hostwarden/internal/api"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/store"
+	"hostwarden/web"
 )
 
 func env(key, def string) string {
 	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	// Variables from versions released as FreeCenter keep working.
+	if v := os.Getenv(strings.Replace(key, "HOSTWARDEN_", "FREECENTER_", 1)); v != "" {
 		return v
 	}
 	return def
@@ -28,7 +33,7 @@ func env(key, def string) string {
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	dataDir := env("FREECENTER_DATA", "./data")
+	dataDir := env("HOSTWARDEN_DATA", "./data")
 	if err := os.MkdirAll(dataDir, 0700); err != nil {
 		logger.Error("create data dir", "err", err)
 		os.Exit(1)
@@ -36,10 +41,10 @@ func main() {
 
 	if len(os.Args) > 1 {
 		if os.Args[1] != "reset-password" || len(os.Args) > 3 {
-			fmt.Fprintln(os.Stderr, "usage: freecenter [reset-password [username]]")
+			fmt.Fprintln(os.Stderr, "usage: hostwarden [reset-password [username]]")
 			os.Exit(2)
 		}
-		username := env("FREECENTER_ADMIN_USER", "admin")
+		username := env("HOSTWARDEN_ADMIN_USER", "admin")
 		if len(os.Args) == 3 {
 			username = os.Args[2]
 		}
@@ -57,13 +62,13 @@ func main() {
 	}
 
 	// bootstrap admin user
-	adminUser := env("FREECENTER_ADMIN_USER", "admin")
-	adminPass := env("FREECENTER_ADMIN_PASSWORD", "admin")
+	adminUser := env("HOSTWARDEN_ADMIN_USER", "admin")
+	adminPass := env("HOSTWARDEN_ADMIN_PASSWORD", "admin")
 	if created, err := st.EnsureAdmin(adminUser, adminPass); err != nil {
 		logger.Error("bootstrap admin", "err", err)
 		os.Exit(1)
 	} else if created {
-		logger.Warn("bootstrap admin user created", "username", adminUser, "hint", "password from FREECENTER_ADMIN_PASSWORD (default: admin); change it after the first login")
+		logger.Warn("bootstrap admin user created", "username", adminUser, "hint", "password from HOSTWARDEN_ADMIN_PASSWORD (default: admin); change it after the first login")
 	}
 
 	mgr := esxi.NewManager(st.Host, filepath.Join(dataDir, "known_hosts"))
@@ -75,7 +80,7 @@ func main() {
 	mux.Handle("/auth/", routes)
 	mux.Handle("/", web.Handler())
 
-	addr := env("FREECENTER_ADDR", ":8080")
+	addr := env("HOSTWARDEN_ADDR", ":8080")
 	httpSrv := &http.Server{
 		Addr:              addr,
 		Handler:           mux,
@@ -83,7 +88,7 @@ func main() {
 	}
 
 	go func() {
-		logger.Info("freecenter listening", "addr", addr)
+		logger.Info("hostwarden listening", "addr", addr)
 		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error("http server", "err", err)
 			os.Exit(1)

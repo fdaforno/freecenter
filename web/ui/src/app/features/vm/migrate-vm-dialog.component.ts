@@ -107,7 +107,7 @@ import {
                     <clr-alert-item>
                       <span class="alert-text">
                         The hosts have different CPUs ({{ c.source_cpu }} → {{ c.target_cpu }}). A running virtual machine cannot be moved between them
-                        without stopping it. FreeCenter can shut it down, migrate it and start it again on the target host.
+                        without stopping it. Hostwarden can shut it down, migrate it and start it again on the target host.
                       </span>
                     </clr-alert-item>
                   </clr-alert>

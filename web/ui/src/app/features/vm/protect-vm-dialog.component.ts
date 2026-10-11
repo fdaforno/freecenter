@@ -88,7 +88,7 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
                   <option [value]="d.name">{{ d.name }} ({{ d.free_bytes | bytes }} free)</option>
                 }
               </select>
-              <clr-control-helper>On {{ hostName() }}, in the freecenter-backups folder</clr-control-helper>
+              <clr-control-helper>On {{ hostName() }}, in the hostwarden-backups folder</clr-control-helper>
             </clr-select-container>
             @if (otherHosts().length > 0) {
               <clr-select-container>
@@ -124,7 +124,7 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
         <p class="fc-muted">
           @if (kind === 'backup') {
             A running virtual machine is not stopped: a temporary snapshot is taken, the disks are copied (thin) and the snapshot is removed. The backup
-            can be restored as a new virtual machine from FreeCenter &gt; Backups.
+            can be restored as a new virtual machine from Hostwarden &gt; Backups.
           } @else {
             Snapshots are taken without memory. Only the snapshots created by schedules (named fc-auto-...) are removed when the limit is exceeded.
             Snapshots are not backups: they live on the same disks as the virtual machine.

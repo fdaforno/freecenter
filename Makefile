@@ -2,7 +2,7 @@
 # part of the repository: see the end of this file.
 -include Makefile.local
 
-IMAGE ?= freecenter
+IMAGE ?= hostwarden
 TAG   ?= latest
 
 .PHONY: build test vet run clean docker ui ui-lint ui-dev
@@ -33,10 +33,10 @@ test: $(UI_DIST)
 	go test ./...
 
 run: ui ## run the server on :8080 with its data in ./data
-	go run ./cmd/freecenter
+	go run ./cmd/hostwarden
 
 clean:
-	rm -rf freecenter web/dist
+	rm -rf hostwarden web/dist
 
 docker: ## build the container image
 	docker build -t $(IMAGE):$(TAG) .
@@ -44,7 +44,7 @@ docker: ## build the container image
 # Makefile.local can set IMAGE and TAG and add targets of your own, e.g. to
 # push a multi-architecture image to your registry and redeploy:
 #
-#   IMAGE := registry.example.com/freecenter
+#   IMAGE := registry.example.com/hostwarden
 #
 #   .PHONY: docker-push deploy
 #   docker-push:

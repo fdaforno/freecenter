@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/model"
+	"hostwarden/internal/model"
 )
 
 // Disk health probes are expensive: each datastore means several SSH

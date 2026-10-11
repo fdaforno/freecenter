@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"freecenter/internal/esxi"
-	"freecenter/internal/model"
+	"hostwarden/internal/esxi"
+	"hostwarden/internal/model"
 )
 
 func validateBackupRequest(req *model.BackupRequest) string {

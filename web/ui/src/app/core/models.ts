@@ -359,7 +359,7 @@ export interface Schedule {
   last_error?: string;
 }
 
-/** A FreeCenter account. */
+/** A Hostwarden account. */
 export interface User {
   id: string;
   username: string;
