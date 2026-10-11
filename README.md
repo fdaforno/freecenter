@@ -4,6 +4,14 @@
 
 > FreeCenter is not a VMware or Broadcom product and is not affiliated with, endorsed or supported by them. See [Licensing and compliance](#licensing-and-compliance) and [Trademarks](#trademarks).
 
+## What it is, and what it is not
+
+FreeCenter is a simple user interface, and an API, that wraps the standard administration commands already present on an ESXi host (`vim-cmd`, `esxcli`, `vmkfstools`). Everything it does, an administrator can do by hand in the host's own shell; FreeCenter only saves the typing.
+
+Its purpose is **not** to work around the licensing of vCenter Server or of any other product. It is not a replacement for vCenter Server, it does not unlock licensed features, and it adds nothing to a host that the host does not already offer.
+
+The one practical advantage is automation in a **home lab**: with the REST API and the Terraform provider you can describe machines as code and build throwaway test systems quickly. It is meant for home labs and test environments, not for production.
+
 FreeCenter brings your standalone ESXi hosts together: one web console for all of them, virtual machine lifecycle, templates and clones, migration between hosts, backups, scheduled tasks, monitoring, users and roles, a REST API and a Terraform provider. It runs as a single small container next to your hosts and needs nothing installed on them.
 
 ![FreeCenter demo: add a host, deploy a VM from a cloud image, open its console, take a snapshot](docs/media/freecenter-demo.gif)
@@ -18,7 +26,7 @@ A standalone ESXi host is a capable hypervisor, but it is managed on its own:
 - cloning, templates, backups and moving a machine to another host are manual work;
 - where the host's management API only answers queries, automation tools that rely on it cannot create or change anything.
 
-FreeCenter fills that gap for home labs, small offices and test environments. It reads the inventory through the host's management API and makes every change over SSH, with the administration tools already present on the host and the administrator credentials you give it. You point it at your hosts and manage everything from one place, by hand or through automation.
+FreeCenter fills that gap for home labs and test environments. It reads the inventory through the host's management API and makes every change over SSH, with the administration tools already present on the host and the administrator credentials you give it. You point it at your hosts and manage everything from one place, by hand or through automation.
 
 ## What you can do with it
 
@@ -185,13 +193,14 @@ FreeCenter is a management client, written from scratch. It contains and distrib
 
 - It connects to your hosts with the credentials you give it and uses only the interfaces and administration tools that the host itself provides.
 - It does not patch, modify or replace the hypervisor, and it does not turn on features that a host's license does not include.
+- It is not intended to circumvent the licensing of vCenter Server or of any other product: it only runs, on your behalf, the standard commands that the host already provides to its administrator.
 - It never changes license keys or licensing settings; it only displays the name of the license a host reports.
 
 You are responsible for making sure that the way you use your hosts, with or without FreeCenter, complies with the license agreement under which you obtained the hypervisor. If you are unsure whether it does, ask the vendor.
 
 ## Trademarks
 
-VMware, ESXi and vSphere are registered trademarks or trademarks of Broadcom Inc. and/or its subsidiaries. They are used here only to identify the software FreeCenter works with. FreeCenter is an independent project: it is not affiliated with, endorsed, sponsored or supported by Broadcom or VMware.
+VMware, ESXi, vSphere and vCenter are registered trademarks or trademarks of Broadcom Inc. and/or its subsidiaries. They are used here only to identify the software FreeCenter works with. FreeCenter is an independent project: it is not affiliated with, endorsed, sponsored or supported by Broadcom or VMware.
 
 ## Disclaimer
 
