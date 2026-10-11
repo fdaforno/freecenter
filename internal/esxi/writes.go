@@ -17,8 +17,7 @@ import (
 	"freecenter/internal/model"
 )
 
-// All mutating operations go through SSH (vim-cmd / vmkfstools / VMX editing)
-// because a standalone host may reject API writes (vim.fault.RestrictedVersion).
+// All mutating operations go through SSH (vim-cmd / vmkfstools / VMX editing).
 
 var ErrSSHDisabled = fmt.Errorf("ssh is not enabled for this host; FreeCenter makes every change over SSH, so writes require ssh_enabled=true")
 
