@@ -12,7 +12,7 @@ import { Alarm, ApiService, errorMessage } from '../core';
     <div class="alarms-toolbar">
       <button class="btn btn-sm btn-outline" (click)="refresh()" [disabled]="refreshing()">
         <cds-icon shape="refresh" [class.spin]="refreshing()"></cds-icon>
-        Aggiorna
+        Refresh
       </button>
     </div>
 
