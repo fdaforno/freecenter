@@ -4,7 +4,18 @@ All notable changes to FreeCenter are listed here. Dates are in UTC.
 
 ## [Unreleased]
 
+### Security
+
+- **Diagnostics console.** The esxcli console matched commands by
+  prefix and passed them to the host's shell as typed, so anything
+  could be appended to an allowed command. It now accepts only esxcli
+  `list`/`get` queries in a fixed set of namespaces and refuses
+  everything a shell would interpret.
+
 ### Added
+
+- **Password recovery.** `freecenter reset-password [username]` sets a
+  new password from the terminal when the administrator's one is lost.
 
 - **OIDC single sign-on.** FreeCenter can now delegate authentication
   to an external identity provider (e.g. Keycloak). The login page

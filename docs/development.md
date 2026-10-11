@@ -54,6 +54,15 @@ Creating virtual machines with cloud-init needs `genisoimage` on the machine run
 
 **About the key.** By default the key is generated on first start and stored next to the state file: a copy of the state file alone is useless, but whoever can read the whole directory has both. To keep them apart, provide the key through `FREECENTER_SECRET_KEY`. Without the right key the server refuses to start.
 
+## Lost administrator password
+
+`freecenter reset-password [username]` asks for a new password on the terminal and writes it to the state file (the user defaults to `admin`). The server keeps its state in memory, so restart it afterwards:
+
+```bash
+docker exec -it freecenter freecenter reset-password
+docker restart freecenter
+```
+
 ## Notes on behavior
 
 - Hardware changes and deletion require the virtual machine to be powered off.

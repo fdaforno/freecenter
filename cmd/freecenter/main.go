@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -31,6 +32,22 @@ func main() {
 	if err := os.MkdirAll(dataDir, 0700); err != nil {
 		logger.Error("create data dir", "err", err)
 		os.Exit(1)
+	}
+
+	if len(os.Args) > 1 {
+		if os.Args[1] != "reset-password" || len(os.Args) > 3 {
+			fmt.Fprintln(os.Stderr, "usage: freecenter [reset-password [username]]")
+			os.Exit(2)
+		}
+		username := env("FREECENTER_ADMIN_USER", "admin")
+		if len(os.Args) == 3 {
+			username = os.Args[2]
+		}
+		if err := resetPassword(filepath.Join(dataDir, "store.json"), username); err != nil {
+			fmt.Fprintln(os.Stderr, "reset-password:", err)
+			os.Exit(1)
+		}
+		return
 	}
 
 	st, err := store.Open(filepath.Join(dataDir, "store.json"))
