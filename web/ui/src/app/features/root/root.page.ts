@@ -21,7 +21,7 @@ const TABS: ObjectTab[] = [
   { id: 'schedules', label: 'Scheduled Tasks' },
 ];
 
-/** The inventory root: what a vCenter Server object shows in the vSphere Client. */
+/** The inventory root: totals, capacity and alarms across all registered hosts. */
 @Component({
   selector: 'app-root-page',
   imports: [ClarityModule, ObjectHeaderComponent, UsageMeterComponent, HostGridComponent, VmGridComponent, DatastoreGridComponent, NetworkGridComponent, ProtectionComponent, AlarmsComponent],

@@ -13,7 +13,7 @@ import (
 )
 
 // Host configuration: reads go through the SOAP API, changes through SSH
-// (esxcli / init scripts), like every other write on ESXi free.
+// (esxcli / init scripts), like every other change to a host.
 
 // sshServiceKey is the service FreeCenter itself depends on for all writes.
 const sshServiceKey = "TSM-SSH"

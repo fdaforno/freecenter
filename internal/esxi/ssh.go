@@ -7,6 +7,8 @@ import (
 	"io"
 	"net"
 	"os"
+	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -186,37 +188,79 @@ func (s *SSHClient) RunWithStdin(ctx context.Context, cmd string, r io.Reader) (
 	return buf.String(), nil
 }
 
-// esxcliAllowlist defines the esxcli/vim-cmd prefixes permitted via the API.
-var esxcliAllowlist = []string{
-	"esxcli system version",
-	"esxcli system settings",
-	"esxcli system health",
-	"esxcli hardware cpu",
-	"esxcli hardware memory",
-	"esxcli hardware nic list",
-	"esxcli storage filesystem list",
-	"esxcli storage vmfs extent list",
-	"esxcli storage core device list",
-	"esxcli storage core device smart",
-	"esxcli nvme device list",
-	"esxcli nvme device log",
-	"esxcli nvme device namespace",
-	"esxcli network ip interface",
-	"esxcli network ip route",
-	"esxcli network vswitch standard list",
-	"esxcli network vm list",
-	"esxcli vm process list",
-	"esxcli vm process kill",
-	"vim-cmd vimsvc/license",
-	"vim-cmd vmsvc/getallvms",
+// esxcliNamespaces are the esxcli namespaces the diagnostics console may
+// query. Only their "list" and "get" commands are accepted (see CommandAllowed).
+var esxcliNamespaces = [][]string{
+	{"system", "version"},
+	{"system", "settings"},
+	{"system", "health"},
+	{"hardware", "cpu"},
+	{"hardware", "memory"},
+	{"hardware", "nic"},
+	{"storage", "filesystem"},
+	{"storage", "vmfs", "extent"},
+	{"storage", "core", "device"},
+	{"nvme", "device"},
+	{"network", "ip", "interface"},
+	{"network", "ip", "route"},
+	{"network", "vswitch", "standard"},
+	{"network", "vm"},
+	{"vm", "process"},
 }
 
+// vimCmdQueries are the vim-cmd invocations the diagnostics console accepts,
+// matched as a whole: nothing may be appended to them.
+var vimCmdQueries = [][]string{
+	{"vimsvc/license", "--show"},
+	{"vmsvc/getallvms"},
+}
+
+// commandArgRE is what one word of a console command may look like. The
+// command reaches the host's shell as typed, so anything the shell would
+// interpret (separators, pipes, redirections, substitutions, quotes) is refused.
+var commandArgRE = regexp.MustCompile(`^[A-Za-z0-9_.:/=,@-]+$`)
+
+// CommandAllowed reports whether cmd is a query the diagnostics console may
+// run on a host: an esxcli "list" or "get" in one of esxcliNamespaces, or one
+// of vimCmdQueries. Commands that change the host are never accepted.
 func CommandAllowed(cmd string) bool {
-	cmd = strings.TrimSpace(cmd)
-	for _, p := range esxcliAllowlist {
-		if strings.HasPrefix(cmd, p) {
-			return true
+	if strings.ContainsAny(cmd, "\t\r\n") {
+		return false
+	}
+	args := strings.Fields(cmd)
+	if len(args) == 0 {
+		return false
+	}
+	for _, a := range args {
+		if !commandArgRE.MatchString(a) {
+			return false
 		}
 	}
+	switch args[0] {
+	case "esxcli":
+		return esxcliQuery(args[1:])
+	case "vim-cmd":
+		return slices.ContainsFunc(vimCmdQueries, func(q []string) bool { return slices.Equal(q, args[1:]) })
+	}
 	return false
+}
+
+// esxcliQuery reports whether args (an esxcli command line without the
+// program name) is "<namespace...> list|get [options]" in an allowed namespace.
+func esxcliQuery(args []string) bool {
+	// The command is the last word before the options.
+	words := args
+	if i := slices.IndexFunc(args, func(a string) bool { return strings.HasPrefix(a, "-") }); i >= 0 {
+		words = args[:i]
+	}
+	if len(words) < 2 {
+		return false
+	}
+	if verb := words[len(words)-1]; verb != "list" && verb != "get" {
+		return false
+	}
+	namespace := words[:len(words)-1]
+	return slices.ContainsFunc(esxcliNamespaces, func(ns []string) bool {
+		return len(namespace) >= len(ns) && slices.Equal(namespace[:len(ns)], ns)
+	})
 }

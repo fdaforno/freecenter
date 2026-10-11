@@ -2,7 +2,7 @@ import { Component, computed, input } from '@angular/core';
 
 import { percent } from '../core';
 
-/** One row of the vSphere "Capacity and Usage" card. */
+/** One row of a "Capacity and Usage" card. */
 @Component({
   selector: 'app-usage-meter',
   template: `

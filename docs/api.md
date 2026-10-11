@@ -55,7 +55,7 @@ Permissions are checked on every mutating request: a user needs `manage_vms` for
 | GET | `/hosts/{hid}/datastores/{ds}/health` | SMART/NVMe health of the devices backing a datastore (SSH-only, best effort) |
 | GET | `/hosts/{hid}/networks` | networks available to virtual machines |
 | GET | `/hosts/{hid}/guest-os` | supported guest operating systems |
-| POST | `/hosts/{hid}/esxcli` | `{command:"esxcli ..."}`: read-only commands from an allow list (a query: allowed to read-only users) |
+| POST | `/hosts/{hid}/esxcli` | `{command:"esxcli ..."}`: esxcli `list`/`get` queries in a fixed set of namespaces; anything else is refused (a query: allowed to read-only users) |
 | GET | `/hosts/{hid}/performance`, `/hosts/{hid}/events` | real-time statistics of the last hour / event log |
 
 ### Host configuration

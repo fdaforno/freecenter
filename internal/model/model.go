@@ -138,7 +138,7 @@ type Datastore struct {
 
 // DiskHealth is the health of a single backing device of a datastore.
 //
-// On ESXi free, SMART/NVMe health is only reachable over SSH
+// On a standalone host, SMART/NVMe health is only reachable over SSH
 // (esxcli storage core device smart / esxcli storage core device list).
 // Not every controller exposes every field: missing values stay zero
 // and the corresponding *Ok flag is false.

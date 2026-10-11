@@ -11,7 +11,7 @@ import (
 	"freecenter/internal/model"
 )
 
-// Disk health is read over SSH because ESXi free does not expose
+// Disk health is read over SSH: a standalone host does not expose
 // SMART/NVMe health through the SOAP API.
 //
 // SATA/SAS: "esxcli storage core device smart get -d <id>" produces a

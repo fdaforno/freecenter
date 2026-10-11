@@ -46,7 +46,7 @@ import { ApiService, DialogService, Host, InventoryService, TaskService, errorMe
               <label>SSH</label>
               <clr-checkbox-wrapper>
                 <input type="checkbox" clrCheckbox name="sshEnabled" [(ngModel)]="sshEnabled" />
-                <label>Enabled (required for write operations on ESXi free)</label>
+                <label>Enabled (required for every change to the host)</label>
               </clr-checkbox-wrapper>
             </clr-checkbox-container>
           }

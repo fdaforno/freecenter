@@ -1,6 +1,6 @@
-# Migrating virtual machines between hosts without vCenter
+# Migrating virtual machines between hosts
 
-Real vMotion, the live transfer of a running machine's memory between hosts, is a licensed feature of the hypervisor, orchestrated by vCenter. On a free ESXi host it is switched off, and no management channel turns it on. FreeCenter therefore migrates in the ways a standalone host does allow, and tells you up front which one applies and how long the machine will be stopped.
+FreeCenter does not do live migration: the memory of a running machine is never transferred while the machine runs. It migrates in the ways a standalone host allows, and tells you up front which one applies and how long the machine will be stopped.
 
 ## The four cases
 
@@ -28,7 +28,7 @@ In every case the source copy is removed only once the machine is registered on 
 - All disks of the machine must be in its own folder.
 - The target host needs a port group with the same name for each network adapter, enough free space, and no folder with the machine's name on the target datastore.
 - The source host must reach the target host on the SSH port.
-- It is not transparent like vMotion: while the machine is stopped, client connections can time out.
+- It is not transparent: while the machine is stopped, client connections can time out.
 - A machine cannot be moved between two datastores of the same host.
 
 ## What has been tried

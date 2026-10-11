@@ -38,7 +38,7 @@ func (c *Client) DownloadDatastoreFile(ctx context.Context, datastore, remotePat
 
 // DeleteDatastoreFile deletes a file or an empty directory on a datastore.
 // Directories are never removed recursively: a folder with content is refused.
-// Uses SSH (rm/rmdir) because the FileManager API task is license-gated.
+// Uses SSH (rm/rmdir), like every other change to a host.
 func (c *Client) DeleteDatastoreFile(ctx context.Context, datastore, remotePath string) error {
 	if c.ssh == nil {
 		return ErrSSHDisabled
@@ -78,7 +78,7 @@ func (s *SSHClient) DownloadISO(ctx context.Context, datastore, folder, name, ur
 
 // DownloadISOHTTP downloads a URL via HTTP on the FreeCenter server and uploads
 // it to the datastore via SSH (cat pipe). Used when ESXi BusyBox wget cannot
-// reach the internet (HTTPS limitation) and govmomi upload is license-gated.
+// reach the internet (HTTPS limitation).
 func (c *Client) DownloadISOHTTP(ctx context.Context, datastore, folder, name, url string) error {
 	if c.ssh == nil {
 		return ErrSSHDisabled
@@ -108,7 +108,7 @@ func (c *Client) DownloadISOHTTP(ctx context.Context, datastore, folder, name, u
 		return fmt.Errorf("download write: %w", err)
 	}
 	tmp.Close()
-	// upload via SSH cat pipe (bypasses govmomi license gate)
+	// upload via SSH cat pipe
 	dsPath := "/vmfs/volumes/" + datastore
 	if folder != "" {
 		dsPath += "/" + strings.TrimPrefix(folder, "/")

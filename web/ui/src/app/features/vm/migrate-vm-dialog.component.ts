@@ -16,10 +16,10 @@ import {
 } from '../../core';
 
 /**
- * Migrate a virtual machine to another host. Without vCenter there is no live
- * vMotion: the VM is stopped or suspended, copied host-to-host and started on
- * the target. The dialog runs the compatibility checks and lets the user pick
- * how a running VM is handled.
+ * Migrate a virtual machine to another host. The migration is not live: the
+ * VM is stopped or suspended, copied host-to-host and started on the target.
+ * The dialog runs the compatibility checks and lets the user pick how a
+ * running VM is handled.
  */
 @Component({
   selector: 'app-migrate-vm-dialog',

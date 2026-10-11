@@ -9,8 +9,8 @@ import (
 	"freecenter/internal/model"
 )
 
-// Snapshots are managed via SSH (vim-cmd vmsvc/snapshot.*) because external
-// API writes are license-gated on ESXi free 8.0.3. Snapshot ids are the
+// Snapshots are managed via SSH (vim-cmd vmsvc/snapshot.*), like every other
+// change to a host. Snapshot ids are the
 // vim-cmd "Snapshot Id" values from `vim-cmd vmsvc/snapshot.get`.
 
 var (

@@ -45,14 +45,18 @@ import { RecentTasksComponent } from './recent-tasks.component';
       <clr-header class="fc-header">
         <div class="branding">
           <a routerLink="/root" class="nav-link">
-            <cds-icon shape="applications" size="24"></cds-icon>
+            <svg class="fc-logo" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <rect x="2" y="3" width="20" height="5" rx="1.5" />
+              <rect x="2" y="9.5" width="14" height="5" rx="1.5" />
+              <rect x="2" y="16" width="8" height="5" rx="1.5" />
+            </svg>
             <span class="title">FreeCenter</span>
           </a>
         </div>
         <form class="fc-search" (ngSubmit)="search()">
           <label for="fc-search">
             <cds-icon shape="search" size="16"></cds-icon>
-            <input id="fc-search" type="text" name="q" placeholder="Search in all environments" [(ngModel)]="query" />
+            <input id="fc-search" type="text" name="q" placeholder="Search virtual machines" [(ngModel)]="query" />
           </label>
         </form>
         <div class="header-actions">
@@ -135,9 +139,9 @@ import { RecentTasksComponent } from './recent-tasks.component';
       font-size: 0.8rem;
       font-weight: 400;
     }
-    .branding cds-icon {
+    .branding .fc-logo {
       margin-right: 0.4rem;
-      color: #fff;
+      fill: var(--fc-brand);
     }
     .fc-search {
       flex: 0 1 22rem;

@@ -6,7 +6,6 @@ README.md
 docker-compose.yml
 *.md
 docs/
-LICENSE
 .github/
 Dockerfile
 .dockerignore

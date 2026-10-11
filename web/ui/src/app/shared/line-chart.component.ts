@@ -13,9 +13,8 @@ interface Tick {
 }
 
 /**
- * A single-series time chart, as in the vSphere performance overview: one
- * measure per chart (never two scales on one plot), a thin line over a light
- * wash, the current value labelled at the end of the line, and a crosshair
+ * A single-series time chart: one measure per chart (never two scales on one
+ * plot), a thin line over a light wash, the current value labelled at the end of the line, and a crosshair
  * with a tooltip on hover. The data is also available as a table. The plot is
  * drawn at the pixel size of its container, so it fills whatever card it is in
  * without stretching the text.

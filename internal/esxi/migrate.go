@@ -19,9 +19,9 @@ import (
 
 // VM migration between two standalone ESXi hosts.
 //
-// vMotion needs vCenter and a license, so this is the closest equivalent that
-// the free hypervisor allows: the VM is stopped (or suspended), its folder is
-// copied host-to-host over SSH, and it is registered and started on the target.
+// This is a cold (or suspended) migration, not a live one: the VM is stopped
+// (or suspended), its folder is copied host-to-host over SSH, and it is
+// registered and started on the target.
 // The data never passes through FreeCenter: the source host pushes it directly
 // to the target with a key pair created for that purpose.
 

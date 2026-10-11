@@ -552,7 +552,7 @@ func (s *Server) handleEsxcli(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !esxi.CommandAllowed(req.Command) {
-		errJSON(w, http.StatusForbidden, "command not allowed; permitted prefixes: esxcli/vim-cmd read-only commands")
+		errJSON(w, http.StatusForbidden, "command not allowed: the console only runs esxcli list/get queries")
 		return
 	}
 	if !h.SSHEnabled {

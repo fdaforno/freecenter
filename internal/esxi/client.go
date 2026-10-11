@@ -28,9 +28,9 @@ var (
 )
 
 // Client wraps a govmomi connection (reads) and an SSH connection (writes)
-// to a single ESXi host. ESXi free 8.0.3 gates external API writes with
-// vim.fault.RestrictedVersion, so all mutating operations go through SSH
-// (vim-cmd / vmkfstools / VMX editing) which is not license-gated.
+// to a single ESXi host. A standalone host may answer API writes with
+// vim.fault.RestrictedVersion, so all mutating operations use the host's own
+// administration tools over SSH (vim-cmd / vmkfstools / VMX editing).
 type Client struct {
 	mu     sync.Mutex
 	rec    *model.HostRecord

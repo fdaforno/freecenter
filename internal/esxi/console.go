@@ -15,8 +15,8 @@ type ConsoleTicket struct {
 	InsecureTLS bool // skip TLS verification (ESXi self-signed certificate)
 }
 
-// ConsoleTicket acquires a WebMKS ticket. It is a read-type SOAP call, so it
-// works on ESXi free; the VM must be powered on.
+// ConsoleTicket acquires a WebMKS ticket. It is a read-type SOAP call; the VM
+// must be powered on.
 func (c *Client) ConsoleTicket(ctx context.Context, id string) (*ConsoleTicket, error) {
 	if err := c.Ensure(ctx); err != nil {
 		return nil, err

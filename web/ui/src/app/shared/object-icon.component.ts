@@ -5,7 +5,7 @@ import { Host, Vm } from '../core';
 
 export type IconState = '' | 'on' | 'suspended' | 'error' | 'warn';
 
-/** Icon shape of a VM: templates get their own, as in the vSphere inventory. */
+/** Icon shape of a VM: templates get their own. */
 export function vmShape(vm: Vm): string {
   return vm.template ? 'file-settings' : 'vm';
 }
@@ -20,7 +20,7 @@ export function hostIconState(host: Host): IconState {
   return host.status.maintenance_mode ? 'warn' : '';
 }
 
-/** Inventory object icon with the vSphere-style state overlay. */
+/** Inventory object icon with a state overlay. */
 @Component({
   selector: 'app-object-icon',
   imports: [ClarityModule],

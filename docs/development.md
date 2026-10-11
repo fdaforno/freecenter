@@ -2,9 +2,9 @@
 
 ## How it works
 
-The free ESXi license makes the vSphere management API **read-only**: any call that changes something fails with `RestrictedVersion`. Reads work normally. FreeCenter therefore uses two channels to each host:
+A standalone ESXi host may answer management API calls that change something with `RestrictedVersion`, while queries work normally. FreeCenter therefore uses two channels to each host, both with the administrator credentials you registered:
 
-- the **vSphere API** (port 443, through [govmomi](https://github.com/vmware/govmomi)) for everything it reads: inventory, host status, datastores, networks, performance, events, console tickets, file transfers;
+- the host's **management API** (port 443, through [govmomi](https://github.com/vmware/govmomi)) for everything it reads: inventory, host status, datastores, networks, performance, events, console tickets, file transfers;
 - **SSH** (port 22) for everything it changes, using the tools that ship with ESXi (`vim-cmd`, `vmkfstools`, `esxcli`) and by editing virtual machine configuration files.
 
 Nothing is installed on the hosts. For migrations and remote backups FreeCenter creates a dedicated SSH key on the source host and authorizes it on the target for the source address only, so that the two hosts exchange data directly instead of through the FreeCenter server.

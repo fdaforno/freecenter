@@ -1,7 +1,8 @@
-// Global layout and vSphere Client look on top of Clarity.
+// Global layout and FreeCenter theme on top of Clarity.
 
 :root {
-  --fc-header-bg: #1b2a32;
+  --fc-header-bg: #12312e;
+  --fc-brand: #5eead4;
   --fc-border: #cdd4d9;
   --fc-panel-bg: #fff;
   --fc-nav-width: 300px;
@@ -132,7 +133,7 @@ clr-header.header.fc-header {
   color: #6c6c6c;
 }
 
-// Object icon with a small power overlay, as in the vSphere inventory.
+// Object icon with a small power overlay.
 .fc-obj-icon {
   position: relative;
   display: inline-flex;
@@ -196,7 +197,7 @@ clr-datagrid {
   padding: 0;
 }
 
-// Links inside grids and property lists look like vSphere object links.
+// Links inside grids and property lists are not underlined.
 clr-dg-cell a,
 .fc-props a {
   text-decoration: none;

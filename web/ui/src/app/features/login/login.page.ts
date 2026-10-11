@@ -37,12 +37,19 @@ import { ApiError, ApiService, AuthService, errorMessage } from '../../core';
             </button>
           }
         </div>
+        <p class="legal">FreeCenter is an independent open-source project, not affiliated with or endorsed by VMware or Broadcom.</p>
       </form>
     </div>
   `,
   styles: `
     .login-wrapper {
-      background: linear-gradient(135deg, #1b2a32 0%, #25404f 45%, #0f5e85 100%);
+      background: linear-gradient(135deg, #12312e 0%, #17494a 45%, #0f766e 100%);
+    }
+    .legal {
+      margin: 1.2rem 0 0;
+      color: #8c8c8c;
+      font-size: 0.55rem;
+      line-height: 0.8rem;
     }
     .oidc-divider {
       display: flex;

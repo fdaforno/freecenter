@@ -69,8 +69,7 @@ All notable changes to FreeCenter are listed here. Dates are in UTC.
 
 ### Added
 
-- Initial public release of FreeCenter: a vCenter-style management
-  console for the free VMware ESXi hypervisor. One web console for all
-  hosts, virtual machine lifecycle, templates and clones, migration
-  between hosts, backups, scheduled tasks, monitoring, users and roles,
-  a REST API and a Terraform provider.
+- Initial public release of FreeCenter: one web console for all your
+  standalone ESXi hosts, with virtual machine lifecycle, templates and
+  clones, migration between hosts, backups, scheduled tasks, monitoring,
+  users and roles, a REST API and a Terraform provider.

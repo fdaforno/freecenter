@@ -1,0 +1,48 @@
+FreeCenter
+Copyright 2026 Federico Da Forno
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+FreeCenter is an independent project. It is not affiliated with, endorsed,
+sponsored or supported by Broadcom Inc. or VMware. VMware, ESXi and vSphere
+are registered trademarks or trademarks of Broadcom Inc. and/or its
+subsidiaries, used only to identify the software FreeCenter works with.
+
+FreeCenter contains no proprietary VMware software. It is built with the
+open-source components below, each used unmodified under its own license.
+
+Server
+------
+
+govmomi (https://github.com/vmware/govmomi)
+  Copyright (c) Broadcom. All Rights Reserved. Apache License 2.0.
+
+golang.org/x/crypto (https://cs.opensource.google/go/x/crypto)
+  Copyright 2009 The Go Authors. BSD 3-Clause License.
+
+github.com/google/uuid (https://github.com/google/uuid)
+  Copyright (c) 2009, 2014 Google Inc. BSD 3-Clause License.
+
+The Go standard library and runtime
+  Copyright 2009 The Go Authors. BSD 3-Clause License.
+
+Web console
+-----------
+
+Clarity Design System, @clr/angular and @clr/ui (https://clarity.design)
+  Copyright (c) 2016-2026 Broadcom. All Rights Reserved. MIT License.
+
+noVNC (https://novnc.com)
+  Copyright (c) The noVNC Authors. Mozilla Public License 2.0.
+  Source code: https://github.com/novnc/noVNC
+
+Angular (https://angular.dev)
+  Copyright (c) Google LLC. MIT License.
+
+RxJS (https://rxjs.dev)
+  Copyright (c) Ben Lesh and contributors. Apache License 2.0.
+
+zone.js, tslib and the other packages bundled in the web console are listed,
+with the full text of their licenses, in the file 3rdpartylicenses.txt that
+every build of the console produces and the server publishes at
+/3rdpartylicenses.txt.

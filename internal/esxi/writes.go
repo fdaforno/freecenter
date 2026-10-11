@@ -18,9 +18,9 @@ import (
 )
 
 // All mutating operations go through SSH (vim-cmd / vmkfstools / VMX editing)
-// because ESXi free 8.0.3 rejects external API writes (vim.fault.RestrictedVersion).
+// because a standalone host may reject API writes (vim.fault.RestrictedVersion).
 
-var ErrSSHDisabled = fmt.Errorf("ssh is not enabled for this host; writes require ssh_enabled=true (ESXi free blocks API writes)")
+var ErrSSHDisabled = fmt.Errorf("ssh is not enabled for this host; FreeCenter makes every change over SSH, so writes require ssh_enabled=true")
 
 func (c *Client) sshRun(ctx context.Context, cmd string) (string, error) {
 	if c.ssh == nil {

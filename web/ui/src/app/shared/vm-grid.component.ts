@@ -18,7 +18,7 @@ interface VmRow {
   host: string;
 }
 
-/** Virtual machine list, as in every vSphere "VMs" tab. */
+/** Virtual machine list, shared by every "VMs" tab. */
 @Component({
   selector: 'app-vm-grid',
   imports: [ClarityModule, RouterLink, ObjectIconComponent, MbPipe, PowerPipe],

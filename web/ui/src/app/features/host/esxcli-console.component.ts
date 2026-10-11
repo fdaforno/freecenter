@@ -4,12 +4,12 @@ import { ClarityModule } from '@clr/angular';
 
 import { ApiService, errorMessage } from '../../core';
 
-/** Read-only esxcli / vim-cmd console (the server enforces an allowlist). */
+/** Read-only esxcli console: the server only accepts list/get queries. */
 @Component({
   selector: 'app-esxcli-console',
   imports: [ClarityModule, FormsModule],
   template: `
-    <p class="fc-muted">Read-only esxcli and vim-cmd commands (lists, status, queries). Use the arrow keys for history.</p>
+    <p class="fc-muted">Read-only esxcli queries: <code>list</code> and <code>get</code> commands. Use the arrow keys for history.</p>
     <form class="line" (ngSubmit)="run()">
       <input class="clr-input fc-mono" name="cmd" placeholder="esxcli storage filesystem list" spellcheck="false" autocomplete="off" [(ngModel)]="command" (keydown)="history($event)" />
       <button type="submit" class="btn btn-sm btn-primary" [clrLoading]="busy()" [disabled]="!command.trim()">Run</button>

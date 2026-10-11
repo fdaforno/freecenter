@@ -9,7 +9,7 @@ export interface ObjectTab {
   label: string;
 }
 
-/** vSphere object header: icon, name, quick actions, ACTIONS menu and the tab bar. */
+/** Header of an inventory object: icon, name, quick actions, ACTIONS menu and the tab bar. */
 @Component({
   selector: 'app-object-header',
   imports: [RouterLink, RouterLinkActive, ObjectIconComponent],

@@ -25,6 +25,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/freecen
 FROM alpine:3.20
 RUN adduser -D -u 10001 -g freecenter freecenter && apk add --no-cache ca-certificates qemu-img cdrkit
 COPY --from=build /out/freecenter /usr/local/bin/freecenter
+COPY LICENSE NOTICE /usr/share/licenses/freecenter/
 
 ENV FREECENTER_ADDR=:8080 \
     FREECENTER_DATA=/data
