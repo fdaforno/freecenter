@@ -13,3 +13,7 @@ web/ui/.angular/
 # leftovers
 web-legacy-ui.tar.gz
 .DS_Store
+
+# screenshot tool
+/tools/screenshots/node_modules/
+/tools/screenshots/.video/

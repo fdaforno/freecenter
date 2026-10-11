@@ -1,0 +1,12 @@
+{
+  "name": "hostwarden-screenshots",
+  "private": true,
+  "type": "module",
+  "description": "Regenerates docs/media from a running Hostwarden instance",
+  "scripts": {
+    "capture": "node capture.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}

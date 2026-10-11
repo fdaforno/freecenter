@@ -13,3 +13,4 @@ web/dist/
 web/ui/node_modules/
 web/ui/.angular/
 *.tar.gz
+tools
