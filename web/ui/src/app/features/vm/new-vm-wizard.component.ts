@@ -49,7 +49,7 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
       <clr-wizard-button type="finish">Finish</clr-wizard-button>
 
       <clr-wizard-page>
-        <ng-template clrPageTitle>Select a creation type</ng-template>
+        <ng-template clrPageTitle>Creation type</ng-template>
         <p>How would you like to create a virtual machine?</p>
         <clr-radio-container>
           <clr-radio-wrapper>
@@ -71,14 +71,14 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
       </clr-wizard-page>
 
       <clr-wizard-page [clrWizardPageNextDisabled]="!name.trim() || !host()">
-        <ng-template clrPageTitle>Select a name and compute resource</ng-template>
+        <ng-template clrPageTitle>Name and host</ng-template>
         <form clrForm clrLayout="horizontal">
           <clr-input-container>
             <label>Virtual machine name</label>
             <input clrInput name="name" [(ngModel)]="name" size="40" placeholder="web-01" />
           </clr-input-container>
         </form>
-        <p>Select the destination compute resource for this operation</p>
+        <p>Choose the host that will run the virtual machine</p>
         <table class="table table-compact">
           <thead>
             <tr>
@@ -107,8 +107,8 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
       </clr-wizard-page>
 
       <clr-wizard-page [clrWizardPageNextDisabled]="!datastore()">
-        <ng-template clrPageTitle>Select storage</ng-template>
-        <p>Select the storage for the configuration and disk files</p>
+        <ng-template clrPageTitle>Storage</ng-template>
+        <p>Choose the datastore that will hold the virtual machine</p>
         <table class="table table-compact">
           <thead>
             <tr>
@@ -135,7 +135,7 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
 
       @if (creationType === 'cloud') {
         <clr-wizard-page [clrWizardPageNextDisabled]="!cloudImage">
-          <ng-template clrPageTitle>Select a cloud image</ng-template>
+          <ng-template clrPageTitle>Cloud image</ng-template>
           <p>Images available in the {{ imageFolder }} folder of {{ datastore() }}</p>
           <table class="table table-compact">
             <thead>
@@ -182,7 +182,7 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
       }
 
       <clr-wizard-page [clrWizardPageNextDisabled]="!guestId">
-        <ng-template clrPageTitle>Select a guest OS</ng-template>
+        <ng-template clrPageTitle>Guest OS</ng-template>
         <p>
           {{ creationType === 'cloud' ? 'Confirm the guest OS of the selected image' : 'Choose the guest OS that will be installed on the virtual machine' }}
         </p>
@@ -200,7 +200,7 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
 
       @if (creationType === 'cloud') {
         <clr-wizard-page [clrWizardPageNextDisabled]="!cloudInitValid()">
-          <ng-template clrPageTitle>Customize guest OS</ng-template>
+          <ng-template clrPageTitle>Guest setup</ng-template>
           <p>Applied by cloud-init on the first boot</p>
           <form clrForm clrLayout="horizontal">
             <clr-input-container>
@@ -236,8 +236,8 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
       }
 
       <clr-wizard-page [clrWizardPageNextDisabled]="!(cpu > 0 && memoryMb > 0 && diskGb > 0)">
-        <ng-template clrPageTitle>Customize hardware</ng-template>
-        <p>Configure the virtual machine hardware</p>
+        <ng-template clrPageTitle>Hardware</ng-template>
+        <p>Set the CPU, memory, disks and devices of the virtual machine</p>
         <clr-stack-view>
           <clr-stack-block>
             <clr-stack-label>CPU</clr-stack-label>
@@ -332,8 +332,8 @@ const GUEST_BY_IMAGE: [RegExp, string][] = [
       </clr-wizard-page>
 
       <clr-wizard-page [clrWizardPagePreventDefaultNext]="true" (clrWizardPageOnCommit)="create()" [clrWizardPageNextDisabled]="busy()">
-        <ng-template clrPageTitle>Ready to complete</ng-template>
-        <p>Click Finish to start creation.</p>
+        <ng-template clrPageTitle>Review and create</ng-template>
+        <p>Check the summary, then choose Finish to create the virtual machine.</p>
         @if (createError()) {
           <clr-alert clrAlertType="danger" [clrAlertClosable]="false">
             <clr-alert-item><span class="alert-text">{{ createError() }}</span></clr-alert-item>

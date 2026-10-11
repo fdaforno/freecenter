@@ -101,7 +101,7 @@ const POWER_OFF_POLL_MS = 3000;
                       Add New Device <cds-icon shape="angle" direction="down" size="12"></cds-icon>
                     </button>
                     <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-                      <h4 class="dropdown-header">Disks, Drives and Storage</h4>
+                      <h4 class="dropdown-header">Disks and drives</h4>
                       <button type="button" clrDropdownItem (click)="addDisk()">Hard Disk</button>
                       <button type="button" clrDropdownItem (click)="addCdrom()">CD/DVD Drive</button>
                       <h4 class="dropdown-header">Controllers</h4>
@@ -402,7 +402,7 @@ const POWER_OFF_POLL_MS = 3000;
                           </select>
                         </div>
                         @if (firmware !== currentFirmware) {
-                          <span class="removed">Changing firmware might cause the installed guest operating system to become unbootable.</span>
+                          <span class="removed">An operating system installed with the other firmware will probably not boot after this change.</span>
                         }
                       </clr-stack-content>
                     </clr-stack-block>

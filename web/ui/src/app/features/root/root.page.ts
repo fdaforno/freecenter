@@ -103,7 +103,7 @@ const TABS: ObjectTab[] = [
                 </div>
               </div>
               <div class="card">
-                <div class="card-header">Capacity and Usage</div>
+                <div class="card-header">Resource usage</div>
                 <div class="card-block">
                   <dl class="fc-props cpu">
                     <dt>CPU</dt>

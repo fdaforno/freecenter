@@ -29,11 +29,11 @@ import { ApiService, DialogService, InventoryService, TaskService, Vm, errorMess
           <clr-checkbox-container>
             <clr-checkbox-wrapper>
               <input type="checkbox" clrCheckbox name="memory" [(ngModel)]="memory" [disabled]="!poweredOn()" />
-              <label>Include virtual machine's memory</label>
+              <label>Save the memory of the running machine</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
               <input type="checkbox" clrCheckbox name="quiesce" [(ngModel)]="quiesce" [disabled]="!poweredOn() || memory" />
-              <label>Quiesce guest file system (requires VM tools)</label>
+              <label>Flush the guest file systems first (needs the guest tools)</label>
             </clr-checkbox-wrapper>
           </clr-checkbox-container>
         </form>

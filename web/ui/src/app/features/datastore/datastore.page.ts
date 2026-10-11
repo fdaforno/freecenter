@@ -63,7 +63,7 @@ const TABS: ObjectTab[] = [
                   </div>
                 </div>
                 <div class="card">
-                  <div class="card-header">Capacity and Usage</div>
+                  <div class="card-header">Resource usage</div>
                   <div class="card-block">
                     <app-usage-meter label="Storage" [used]="e.item.capacity_bytes - e.item.free_bytes" [total]="e.item.capacity_bytes" [format]="formatBytes" />
                   </div>
