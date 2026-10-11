@@ -49,7 +49,7 @@ const TABS: ObjectTab[] = [
           <button class="btn btn-icon btn-link btn-sm quick" title="Power Off" [disabled]="v.power_state !== 'poweredOn'" (click)="actions.vmPower(v, 'off')">
             <cds-icon shape="stop" solid status="danger"></cds-icon>
           </button>
-          <button class="btn btn-icon btn-link btn-sm quick" title="Launch Web Console" [disabled]="v.power_state !== 'poweredOn'" (click)="actions.openConsole(v)">
+          <button class="btn btn-icon btn-link btn-sm quick" title="Open console" [disabled]="v.power_state !== 'poweredOn'" (click)="actions.openConsole(v)">
             <cds-icon shape="display"></cds-icon>
           </button>
           <button class="btn btn-icon btn-link btn-sm quick" title="Edit Settings" (click)="dialogs.editVm.set(v)">
@@ -86,7 +86,7 @@ const TABS: ObjectTab[] = [
                         <cds-icon shape="vm" size="36"></cds-icon>
                         <span>{{ v.power_state | power }}</span>
                       </div>
-                      <button class="btn btn-sm btn-link" [disabled]="v.power_state !== 'poweredOn'" (click)="actions.openConsole(v)">Launch Web Console</button>
+                      <button class="btn btn-sm btn-link" [disabled]="v.power_state !== 'poweredOn'" (click)="actions.openConsole(v)">Open console</button>
                       <button class="btn btn-sm btn-link" [disabled]="v.power_state !== 'poweredOn'" (click)="actions.openConsoleTab(v.host_id, v.id)">
                         Open in New Tab <cds-icon shape="pop-out" size="12"></cds-icon>
                       </button>
@@ -96,7 +96,7 @@ const TABS: ObjectTab[] = [
                       <dd>{{ v.template ? 'Template' : (v.power_state | power) }}</dd>
                       <dt>Guest OS</dt>
                       <dd>{{ v.guest_full_name || v.guest_id || '--' }}</dd>
-                      <dt>VMware Tools</dt>
+                      <dt>Guest tools</dt>
                       <dd>{{ v.tools_status || '--' }}</dd>
                       <dt>DNS Name</dt>
                       <dd>{{ v.guest_hostname || '--' }}</dd>
@@ -126,7 +126,7 @@ const TABS: ObjectTab[] = [
                 </div>
 
                 <div class="card">
-                  <div class="card-header">VM Hardware</div>
+                  <div class="card-header">Hardware</div>
                   <div class="card-block">
                     <dl class="fc-props">
                       <dt>CPU</dt>
@@ -151,7 +151,7 @@ const TABS: ObjectTab[] = [
                       }
                       <dt>Firmware</dt>
                       <dd>{{ v.firmware === 'efi' ? 'EFI' : 'BIOS' }}</dd>
-                      <dt>Compatibility</dt>
+                      <dt>Hardware version</dt>
                       <dd>{{ v.hardware_version || '--' }}</dd>
                     </dl>
                   </div>
@@ -161,7 +161,7 @@ const TABS: ObjectTab[] = [
                 </div>
 
                 <div class="card">
-                  <div class="card-header">Related Objects</div>
+                  <div class="card-header">Placement</div>
                   <div class="card-block">
                     <dl class="fc-props">
                       <dt>Host</dt>
@@ -187,7 +187,7 @@ const TABS: ObjectTab[] = [
                 </div>
 
                 <div class="card">
-                  <div class="card-header">Virtual Machine Details</div>
+                  <div class="card-header">Files and snapshots</div>
                   <div class="card-block">
                     <dl class="fc-props">
                       <dt>VM Config File</dt>

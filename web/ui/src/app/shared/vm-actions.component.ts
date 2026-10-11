@@ -20,8 +20,8 @@ import { ActionsService, DialogService, Vm } from '../core';
           <button clrDropdownItem (click)="actions.setTemplate(vm(), false)">Convert to Virtual Machine</button>
           <div class="dropdown-divider" role="separator"></div>
         }
-        <button clrDropdownItem [clrDisabled]="!on()" (click)="actions.openConsole(vm())">Launch Web Console</button>
-        <button clrDropdownItem [clrDisabled]="!on()" (click)="actions.openConsoleTab(vm().host_id, vm().id)">Launch Web Console in New Tab</button>
+        <button clrDropdownItem [clrDisabled]="!on()" (click)="actions.openConsole(vm())">Open console</button>
+        <button clrDropdownItem [clrDisabled]="!on()" (click)="actions.openConsoleTab(vm().host_id, vm().id)">Open console in a new tab</button>
         <div class="dropdown-divider" role="separator"></div>
         <clr-dropdown>
           <button clrDropdownTrigger>Power</button>

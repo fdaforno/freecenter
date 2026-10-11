@@ -43,8 +43,8 @@ interface VmRow {
           <button class="action-item" [disabled]="row.vm.power_state === 'poweredOn' || !!row.vm.template" (click)="actions.vmPower(row.vm, 'on')">Power On</button>
           <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOn'" (click)="actions.vmPower(row.vm, 'shutdown_guest')">Shut Down Guest OS</button>
           <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOn'" (click)="actions.vmPower(row.vm, 'off')">Power Off</button>
-          <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOn'" (click)="actions.openConsole(row.vm)">Launch Web Console</button>
-          <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOn'" (click)="actions.openConsoleTab(row.vm.host_id, row.vm.id)">Launch Web Console in New Tab</button>
+          <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOn'" (click)="actions.openConsole(row.vm)">Open console</button>
+          <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOn'" (click)="actions.openConsoleTab(row.vm.host_id, row.vm.id)">Open console in a new tab</button>
           <button class="action-item" (click)="dialogs.takeSnapshot.set(row.vm)">Take Snapshot...</button>
           <button class="action-item" [disabled]="row.vm.power_state !== 'poweredOff'" (click)="dialogs.cloneVm.set({ vm: row.vm, template: false })">Clone...</button>
           <button class="action-item" (click)="dialogs.migrateVm.set(row.vm)">Migrate...</button>
